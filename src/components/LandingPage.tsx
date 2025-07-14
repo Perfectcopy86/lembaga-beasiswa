@@ -3,14 +3,8 @@
 import React, { useState, useEffect } from "react";
 import {
   GraduationCap,
-  Heart,
   TrendingUp,
-  Users,
-  Target,
   ArrowRight,
-  BarChart3,
-  Globe,
-  Award,
   CheckCircle,
   Sparkles,
   BookOpen,
