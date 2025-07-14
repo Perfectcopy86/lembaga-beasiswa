@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogClose
 } from '@/components/ui/dialog';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -91,7 +91,7 @@ export default function AdminExpensesPage() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'expenses' },
-        (payload) => {
+        () => {
           // Refresh data saat ada perubahan
           fetchExpenses();
         }

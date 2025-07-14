@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import ProfileClientPage from './profile-client-page';
-import { subMonths } from 'date-fns';
+
 
 export default async function ProfilePage() {
   const supabase = await createClient();

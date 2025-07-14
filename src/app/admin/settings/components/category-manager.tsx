@@ -10,7 +10,7 @@ import { Trash2, Plus } from 'lucide-react';
 type Category = { id: number; name: string };
 
 export function CategoryManager({ initialCategories }: { initialCategories: Category[] }) {
-  const [categories, setCategories] = useState(initialCategories);
+  // const [categories, setCategories] = useState(initialCategories);
   const [newCategory, setNewCategory] = useState('');
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);

@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { useRealtimeStatus } from '@/context/realtime-context';
+
 
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -21,7 +21,7 @@ export default function AllocationClient() {
     const [isPending, startTransition] = useTransition();
 
     const supabase = createClient();
-    const router = useRouter();
+    // const router = useRouter();
     // Kita tetap panggil hook ini, meskipun tidak diandalkan untuk re-koneksi
     // const { addReconnectListener, removeReconnectListener } = useRealtimeStatus();
 

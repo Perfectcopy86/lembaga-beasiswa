@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Users, CreditCard, ArrowUpCircle, ArrowDownCircle, Info } from "lucide-react";
+import { Users, CreditCard, ArrowUpCircle, ArrowDownCircle, Info } from "lucide-react";
 import { useEffect, useState, useCallback } from "react"; // 1. Impor useCallback
 import { createClient } from "@/lib/supabase/client";
 import { useRealtimeStatus } from "@/context/realtime-context"; // 2. Impor hook

@@ -2,6 +2,7 @@
 
 // Impor createClient dari supabase-js untuk membuat admin client
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server'; // Tambahkan impor ini jika belum ada
 import { revalidatePath } from 'next/cache';
 
 export async function updateProfile(formData: FormData) {
@@ -57,4 +58,34 @@ export async function updateProfile(formData: FormData) {
     const errorMessage = error instanceof Error ? error.message : 'Terjadi kesalahan tidak diketahui.';
     return { success: false, message: errorMessage };
   }
+}
+
+export async function updatePassword(formData: FormData) {
+  const password = formData.get('password') as string;
+  const confirm_password = formData.get('confirm_password') as string;
+
+  // Validasi input dasar
+  if (!password || !confirm_password) {
+    return { error: 'Password baru dan konfirmasi harus diisi.' };
+  }
+  if (password !== confirm_password) {
+    return { error: 'Password dan konfirmasi password tidak cocok.' };
+  }
+  if (password.length < 6) {
+    return { error: 'Password minimal harus terdiri dari 6 karakter.' };
+  }
+
+  // Buat client Supabase di sisi server
+  const supabase = await createServerClient();
+
+  // Gunakan fungsi updateUser dari Supabase Auth
+  const { error } = await supabase.auth.updateUser({ password: password });
+
+  if (error) {
+    console.error('Update password error:', error.message);
+    return { error: `Gagal memperbarui password: ${error.message}` };
+  }
+
+  // Jika berhasil
+  return { success: 'Password berhasil diperbarui!' };
 }

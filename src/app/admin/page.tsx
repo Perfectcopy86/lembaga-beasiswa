@@ -12,7 +12,7 @@ import {
   ArrowDownCircle,
 } from 'lucide-react';
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
-import { id } from 'date-fns/locale';
+// import { id } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Tipe data untuk state

@@ -89,7 +89,7 @@ export async function signup(formData: FormData) {
     return redirect('/auth?message=Password minimal harus 6 karakter.')
   }
 
-  const { data: { user }, error } = await (await supabase).auth.signUp({
+  const { error } = await (await supabase).auth.signUp({
     email,
     password,
     options: {

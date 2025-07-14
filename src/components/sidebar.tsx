@@ -6,8 +6,6 @@ import Image from 'next/image'; // 1. Impor komponen Image
 import {
   Home,
   Package,
-  Package2,
-  Settings,
   ShoppingCart,
   Users2,
   ChevronLeft

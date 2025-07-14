@@ -3,7 +3,7 @@
 'use client'; // Direktif ini sekarang ada di paling atas berkas
 
 import { useRealtimeStatus } from '@/context/realtime-context';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 
 export function RealtimeStatus() {
   const { status } = useRealtimeStatus();

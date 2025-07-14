@@ -85,7 +85,7 @@ export default function OverviewTab() {
         expenses.forEach(e => {
             const date = new Date(e.tanggal);
             const year = date.getFullYear().toString();
-            const month = date.getMonth();
+            // const month = date.getMonth();
             years.add(year);
             const monthKey = date.toLocaleString('id-ID', { month: 'short' });
 

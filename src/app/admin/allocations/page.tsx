@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+// import { createClient } from "@/lib/supabase/server";
 import AllocationClient from './AllocationClient';
 
 // --- FUNGSI PENGAMBILAN DATA YANG DIPERBARUI ---

@@ -37,7 +37,7 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
     channel = supabase.channel('realtime-status-monitor');
 
     channel
-      .subscribe((status, err) => {
+      .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           setStatus('SUBSCRIBED');
           // 4. Panggil semua listener saat berhasil terkoneksi/re-koneksi

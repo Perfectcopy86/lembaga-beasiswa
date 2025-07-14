@@ -8,7 +8,6 @@ import {
     Package, 
     Users2, 
     ChevronLeft,
-    LineChart,
     Settings,
     FileText,
     HandCoins,

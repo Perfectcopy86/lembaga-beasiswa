@@ -14,7 +14,6 @@ import {
   CheckCircle,
   Sparkles,
   BookOpen,
-  Star,
 } from "lucide-react";
 
 // Menggunakan export default agar sesuai dengan standar import di page.tsx
@@ -42,56 +41,7 @@ export default function LandingPage() {
     window.location.href = "/home";
   };
 
-  const stats = [
-    {
-      icon: Users,
-      label: "Penerima Beasiswa",
-      value: "2,847",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: Heart,
-      label: "Total Donasi",
-      value: "Rp 12.4M",
-      color: "from-pink-500 to-rose-500",
-    },
-    {
-      icon: GraduationCap,
-      label: "Universitas Partner",
-      value: "156",
-      color: "from-purple-500 to-indigo-500",
-    },
-    {
-      icon: Globe,
-      label: "Kota Terjangkau",
-      value: "89",
-      color: "from-green-500 to-emerald-500",
-    },
-  ];
 
-  const features = [
-    {
-      icon: BarChart3,
-      title: "Dashboard Analytics 3D",
-      description:
-        "Visualisasi data donasi dalam bentuk grafik 3D interaktif yang memukau",
-      gradient: "from-blue-600 via-purple-600 to-indigo-600",
-    },
-    {
-      icon: Target,
-      title: "AI Targeting System",
-      description:
-        "Sistem AI canggih dengan visualisasi 3D untuk targeting yang tepat sasaran",
-      gradient: "from-pink-600 via-rose-600 to-red-600",
-    },
-    {
-      icon: Award,
-      title: "Transparansi Hologram",
-      description:
-        "Teknologi hologram untuk transparansi donasi yang dapat dilihat secara real-time",
-      gradient: "from-green-600 via-emerald-600 to-teal-600",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
