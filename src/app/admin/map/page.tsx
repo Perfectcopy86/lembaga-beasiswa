@@ -4,7 +4,7 @@
 import { createClient } from "@/lib/supabase/client"; 
 import React, { useState, useEffect } from 'react';
 import { useRealtimeStatus } from '@/context/realtime-context';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 // --- TYPE DEFINITION ---
 // A specific interface that matches the data structure from your Supabase query
