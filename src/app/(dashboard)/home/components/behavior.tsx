@@ -103,8 +103,8 @@ export default function BehaviorTab() {
       const { data, error } = await supabase.from('donations').select('jumlah, nama_donatur');
       if (error) throw new Error("Gagal mengambil data donasi.");
       setDonations(data as Donation[]);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setLoading(false);
     }
@@ -155,7 +155,7 @@ export default function BehaviorTab() {
                                       position="right" 
                                       offset={8}
                                       style={{ fill: '#888888' }} 
-                                      formatter={(value: any) => formatCurrency(Number(value))}
+                                      formatter={(value: unknown) => formatCurrency(Number(value))}
                                     />
                                 </Bar>
                             </BarChart>
@@ -188,7 +188,7 @@ export default function BehaviorTab() {
                                     contentStyle={{ backgroundColor: '#ffffff', color: '#0f172a', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}
                                 />
                                 <Bar dataKey="value" fill={PRIMARY_CHART_COLOR} radius={[0, 4, 4, 0]}>
-                                    <LabelList dataKey="value" position="right" offset={8} style={{ fill: '#888888' }} formatter={(value: any) => `${value}`} />
+                                    <LabelList dataKey="value" position="right" offset={8} style={{ fill: '#888888' }} formatter={(value: unknown) => `${value}`} />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>

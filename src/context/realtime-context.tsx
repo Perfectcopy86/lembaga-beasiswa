@@ -33,8 +33,7 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
 
 
   useEffect(() => {
-    let channel: RealtimeChannel;
-    channel = supabase.channel('realtime-status-monitor');
+    const channel: RealtimeChannel = supabase.channel('realtime-status-monitor');
 
     channel
       .subscribe((status) => {

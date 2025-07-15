@@ -95,7 +95,7 @@ export default function OverviewTab() {
 
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
         return monthNames.map(month => {
-            const entry: { [key: string]: any } = { month };
+            const entry: { [key: string]: unknown } = { month };
             years.forEach(year => {
                 entry[year] = byMonthYear[month]?.[year] || null;
             });

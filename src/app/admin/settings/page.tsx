@@ -97,7 +97,7 @@ export default function AdminSettingsPage() {
         <CardHeader>
           <CardTitle>Atur Status Keaktifan Pengguna</CardTitle>
           <CardDescription>
-            Tentukan batas hari tanpa donasi sebelum pengguna dianggap "Tidak Aktif".
+            Tentukan batas hari tanpa donasi sebelum pengguna dianggap &quot;Tidak Aktif&quot;.
           </CardDescription>
         </CardHeader>
         <CardContent>

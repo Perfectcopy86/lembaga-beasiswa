@@ -95,8 +95,8 @@ export default function TopPerformersTab() {
       const { data, error } = await supabase.from('donations').select('jumlah, nama_donatur');
       if (error) throw new Error("Gagal mengambil data donasi.");
       setDonations(data as Donation[]);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setLoading(false);
     }

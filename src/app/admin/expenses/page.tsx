@@ -60,7 +60,7 @@ export default function AdminExpensesPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<ExpenseFromDB | null>(null);
-  const [formMessage, setFormMessage] = useState<{ type: 'success' | 'error', text: any } | null>(null);
+  const [formMessage, setFormMessage] = useState<{ type: 'success' | 'error', text: unknown } | null>(null);
 
   const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // 3. Gunakan hook
 
@@ -273,7 +273,7 @@ export default function AdminExpensesPage() {
             </div>
             {formMessage && (
                 <div className={`text-sm p-2 rounded-md mb-4 ${formMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {formMessage.text}
+                    {String(formMessage.text)}
                 </div>
             )}
             <DialogFooter>

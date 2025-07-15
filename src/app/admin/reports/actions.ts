@@ -61,10 +61,10 @@ export async function getReportData(range: DateRange) {
 
 // --- Fungsi untuk mengekspor data ke CSV ---
 
-function convertToCSV(data: any[], headers: string[]): string {
+function convertToCSV(data: unknown[], headers: string[]): string {
     const headerRow = headers.join(',');
     const rows = data.map(row => 
-        headers.map(header => JSON.stringify(row[header] || '')).join(',')
+        headers.map(header => JSON.stringify((row as Record<string, unknown>)[header] || '')).join(',')
     );
     return [headerRow, ...rows].join('\n');
 }

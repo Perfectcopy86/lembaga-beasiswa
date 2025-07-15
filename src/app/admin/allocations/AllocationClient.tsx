@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 
@@ -10,24 +10,43 @@ import { toast } from 'sonner';
 import { createAllocation } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function AllocationClient() {
-    const [items, setItems] = useState<any[]>([]);
-    const [beswanList, setBeswanList] = useState<any[]>([]);
+// --- TYPE DEFINITIONS ---
+// Based on your Supabase query for donation items
+interface DonationItem {
+    id: number;
+    donations: {
+      nama_donatur: string | null;
+    } | null;
+    kategori_beasiswa: {
+      nama_kategori: string | null;
+    } | null;
+  }
+  
+  // Based on the 'beswan' table schema
+  interface Beswan {
+    id: string; // uuid is a string
+    kode_beswan: string | null;
+    nama_beswan: string;
+    status: string | null;
+    angkatan: string | null;
+    created_at: string;
+  }
+  
+
+  export default function AllocationClient() {
+    // Replace 'any' with our new specific types
+    const [items, setItems] = useState<DonationItem[]>([]);
+    const [beswanList, setBeswanList] = useState<Beswan[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const [selectedItem, setSelectedItem] = useState<any | null>(null);
-    const [selectedBeswan, setSelectedBeswan] = useState<any | null>(null);
+    const [selectedItem, setSelectedItem] = useState<DonationItem | null>(null);
+    const [selectedBeswan, setSelectedBeswan] = useState<Beswan | null>(null);
     const [isPending, startTransition] = useTransition();
 
     const supabase = createClient();
-    // const router = useRouter();
-    // Kita tetap panggil hook ini, meskipun tidak diandalkan untuk re-koneksi
-    // const { addReconnectListener, removeReconnectListener } = useRealtimeStatus();
 
-    // Fungsi untuk mengambil data (tidak ada perubahan di sini)
     const fetchData = useCallback(async () => {
-        // Tampilkan loading skeleton setiap kali fetching dimulai ulang
         setLoading(true);
         setError(null);
         try {
@@ -42,16 +61,21 @@ export default function AllocationClient() {
             if (idsToExclude.length > 0) {
                 query = query.not('id', 'in', `(${idsToExclude.join(',')})`);
             }
-            const { data: unallocatedItems, error: itemsError } = await query;
+            // Explicitly type the data from the query
+            const { data: unallocatedItems, error: itemsError } = await query.then(response => ({
+                data: response.data as unknown as DonationItem[],
+                error: response.error
+            }));
             if (itemsError) throw itemsError;
 
-            const { data: allBeswan, error: beswanError } = await supabase.from('beswan').select('*');
+            // Explicitly type the data from the query
+            const { data: allBeswan, error: beswanError } = await supabase.from('beswan').select('*') as { data: Beswan[], error: unknown };
             if (beswanError) throw beswanError;
 
             setItems(unallocatedItems || []);
             setBeswanList(allBeswan || []);
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error fetching allocation data:", err);
             setError("Gagal memuat data. Periksa koneksi Anda.");
         } finally {
@@ -59,12 +83,12 @@ export default function AllocationClient() {
         }
     }, [supabase]);
 
-    // Effect untuk memuat data pertama kali
+    // Effect for initial data load
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
-    // Effect untuk Supabase realtime (untuk update data jika ada perubahan di DB)
+    // Effect for Supabase realtime updates
     useEffect(() => {
         const handleDataChange = () => fetchData();
         const channel = supabase.channel('allocations-changes')
@@ -72,17 +96,10 @@ export default function AllocationClient() {
           .on('postgres_changes', { event: '*', schema: 'public', table: 'donation_items' }, handleDataChange)
           .subscribe();
         
-        // Tetap pasang listener ini sebagai fallback
-        // addReconnectListener(fetchData);
-
         return () => {
             supabase.removeChannel(channel);
-            // removeReconnectListener(fetchData);
         };
     }, [supabase, fetchData]);
-
-    // ✅ PERBAIKAN UTAMA: Tambahkan effect untuk mendeteksi koneksi kembali online
-    
 
     const handleAllocate = () => {
         if (!selectedItem || !selectedBeswan) {
@@ -173,7 +190,7 @@ export default function AllocationClient() {
                 {selectedItem && selectedBeswan && (
                     <p className="mt-4 text-center text-sm text-muted-foreground">
                         Akan menghubungkan: <br />
-                        <span className="font-semibold text-primary">{selectedItem.donations?.nama_donatur}'s {selectedItem.kategori_beasiswa?.nama_kategori}</span>
+                        <span className="font-semibold text-primary">{selectedItem.donations?.nama_donatur}&apos;s {selectedItem.kategori_beasiswa?.nama_kategori}</span>
                         {' -> '}
                         <span className="font-semibold text-green-600">{selectedBeswan.nama_beswan}</span>
                     </p>

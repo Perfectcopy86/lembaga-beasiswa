@@ -61,8 +61,8 @@ export default function NotificationBell() {
         }
 
         setDonations(data as RecentDonation[]);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
         setLoading(false);
       }

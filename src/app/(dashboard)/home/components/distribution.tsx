@@ -151,8 +151,8 @@ export default function DistributionTab() {
       if (profileRes.error) throw new Error("Gagal mengambil data profil.");
       setDonations(donationRes.data as Donation[]);
       setProfiles(profileRes.data as Profile[]);
-    } catch (err: any) { 
-      setError(err.message); 
+    } catch (err: unknown) { 
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally { 
       setLoading(false); 
     }
@@ -263,8 +263,8 @@ export default function DistributionTab() {
                         {(() => {
                             const totalDonors = demographicsData.reduce((sum, entry) => sum + entry.value, 0);
 
-                            const renderLegendWithPercent = (name: string, entry: any) => {
-                                const { value } = entry.payload;
+                            const renderLegendWithPercent = (name: string, entry: unknown) => {
+                                const { value } = (entry as { payload: { value: number } }).payload;
                                 const percentage = totalDonors > 0 ? (value / totalDonors) * 100 : 0;
                                 return `${name} (${percentage.toFixed(0)}%)`;
                             };

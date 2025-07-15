@@ -38,7 +38,7 @@ export default function DonationsPage() {
       
       setDonations(donationsResult.data || []);
       setKategoriBeasiswa(kategoriResult.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error fetching donations data:", err);
       setError("Gagal memuat data. Periksa koneksi Anda.");
     } finally {

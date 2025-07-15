@@ -26,8 +26,8 @@ type KpiData = {
 };
 
 type RecentActivityData = {
-  recentDonations: any[];
-  recentExpenses: any[];
+  recentDonations: unknown[];
+  recentExpenses: unknown[];
 };
 
 // Helper untuk format mata uang
@@ -66,8 +66,8 @@ function RecentActivity({ data }: { data: RecentActivityData }) {
                     <ul className="space-y-2">
                         {data.recentDonations?.map((d, i) => (
                             <li key={i} className="flex justify-between text-sm">
-                                <span>{d.nama_donatur}</span>
-                                <span className="font-medium">{formatCurrency(d.jumlah)}</span>
+                                <span>{(d as { nama_donatur: string }).nama_donatur}</span>
+                                <span className="font-medium">{formatCurrency((d as { jumlah: number }).jumlah)}</span>
                             </li>
                         ))}
                     </ul>
@@ -81,8 +81,8 @@ function RecentActivity({ data }: { data: RecentActivityData }) {
                      <ul className="space-y-2">
                         {data.recentExpenses?.map((e, i) => (
                             <li key={i} className="flex justify-between text-sm">
-                                <span>{e.deskripsi}</span>
-                                <span className="font-medium">{formatCurrency(e.jumlah)}</span>
+                                <span>{(e as { deskripsi: string }).deskripsi}</span>
+                                <span className="font-medium">{formatCurrency((e as { jumlah: number }).jumlah)}</span>
                             </li>
                         ))}
                     </ul>

@@ -69,9 +69,9 @@ export default async function AdminUsersPage() {
       };
     });
 
-  } catch (error: any) {
-    console.error("Gagal memuat data awal pengguna:", error.message);
-    fetchError = error.message; // Simpan pesan error
+  } catch (error: unknown) {
+    console.error("Gagal memuat data awal pengguna:", error instanceof Error ? error.message : String(error));
+    fetchError = error instanceof Error ? error.message : String(error); // Store error message
     // Biarkan eksekusi berlanjut untuk merender UsersTable
   }
 

@@ -107,8 +107,8 @@ export default function TrendsAnalyticsTab() {
       const { data, error } = await supabase.from('donations').select('tanggal_donasi, jumlah');
       if (error) throw new Error("Gagal mengambil data donasi.");
       setDonations(data as Donation[]);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       // Hanya set loading false setelah fetch pertama kali
       setLoading(false);
@@ -134,7 +134,7 @@ export default function TrendsAnalyticsTab() {
   }, [supabase, fetchData, addReconnectListener, removeReconnectListener]);
   // --- AKHIR PERUBAHAN UTAMA ---
 
-  const handleLegendClick = (dataKey: DataKey<any>) => {
+  const handleLegendClick = (dataKey: DataKey<unknown>) => {
     if (typeof dataKey === 'string') {
       setVisibility(prev => ({ ...prev, [dataKey]: !prev[dataKey] }));
       if (!visibility[dataKey]) {

@@ -148,8 +148,8 @@ export default function OverviewTab() {
       // Ambil target dari app_settings
       await fetchTargetsFromAppSettings();
       
-    } catch (err: any) { 
-      setError(err.message); 
+    } catch (err: unknown) { 
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
       console.error(err); // Tampilkan error di console untuk debug
     } finally { 
       setLoading(false); 

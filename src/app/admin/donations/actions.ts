@@ -95,8 +95,8 @@ export async function upsertDonationWithItems(
         if (itemsError) throw itemsError;
     }
 
-  } catch (e: any) {
-    return { error: { _general: [e.message] } };
+  } catch (e: unknown) {
+    return { error: { _general: [(e as Error).message ?? 'An unknown error occurred'] } };
   }
 
   revalidatePath('/admin/donations');
@@ -112,8 +112,8 @@ export async function deleteDonation(id: number) {
     const { error: donationError } = await supabase.from('donations').delete().eq('id', id);
     if (donationError) throw donationError;
 
-  } catch (e: any) {
-    return { error: e.message };
+  } catch (e: unknown) {
+    return { error: (e as Error).message ?? 'An unknown error occurred' };
   }
   
   revalidatePath('/admin/donations');
