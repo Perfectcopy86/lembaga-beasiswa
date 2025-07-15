@@ -4,6 +4,7 @@
 import { createClient } from "@/lib/supabase/client"; 
 import React, { useState, useEffect } from 'react';
 import { useRealtimeStatus } from '@/context/realtime-context';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 // --- TYPE DEFINITION ---
 // A specific interface that matches the data structure from your Supabase query
@@ -119,16 +120,16 @@ export default function MapPage() {
             />
         </div>
             <div className="bg-card shadow-md rounded-lg overflow-hidden">
-                <table className="min-w-full divide-y divide-bg-card-200">
-                    <thead className="bg-card-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Nama Donatur</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Beasiswa</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Tanggal Donasi</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Nama Penerima</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Tanggal Alokasi</th>
-                        </tr>
-                    </thead>
+                <Table className="min-w-full divide-y divide-bg-card-200">
+                    <TableHeader className="bg-card-50">
+                        <TableRow>
+                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Nama Donatur</TableHead>
+                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Beasiswa</TableHead>
+                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Tanggal Donasi</TableHead>
+                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Nama Penerima</TableHead>
+                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Tanggal Alokasi</TableHead>
+                        </TableRow>
+                    </TableHeader>
                     <tbody className="bg-card divide-y divide-bg-card-200">
                       {/* Use the specific type for 'item' */}
                         {filteredData.map((item: MapDataItem) => (
@@ -141,7 +142,7 @@ export default function MapPage() {
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                </Table>
             </div>
             {mapData.length === 0 && <p className="text-center py-8">Belum ada data alokasi.</p>}
         </div>
