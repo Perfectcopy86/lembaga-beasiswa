@@ -80,10 +80,23 @@ export default function MapPage() {
         };
     }, [addReconnectListener, removeReconnectListener]);
 
-    // Use the specific type for the 'data' and 'fallback' parameters
     const getSafe = (data: MapDataItem, path: string, fallback: string | Date = 'N/A') => {
-        return path.split('.').reduce((acc, part) => acc && acc[part], data as any) || fallback;
-    }
+    const parts = path.split('.');
+    let current: unknown = data; // Start with the data object
+
+    for (const part of parts) {
+        // If current is not a valid object, we can't continue traversing.
+        if (typeof current !== 'object' || current === null) {
+            return fallback;
+        }
+        // Access the next part of the path on the current object.
+        current = (current as Record<string, unknown>)[part];
+    }
+
+    // Return the final value, or the fallback if it's null/undefined.
+    // Using ?? is safer than || because it won't replace falsy values like ''.
+    return current ?? fallback;
+}
 
     const filteredData = mapData.filter(item => {
         const namaDonatur = getSafe(item, 'donation_items.donations.nama_donatur', '').toString().toLowerCase();
@@ -120,11 +133,11 @@ export default function MapPage() {
                       {/* Use the specific type for 'item' */}
                         {filteredData.map((item: MapDataItem) => (
                             <tr key={item.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">{getSafe(item, 'donation_items.donations.nama_donatur')}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{getSafe(item, 'donation_items.kategori_beasiswa.nama_kategori')}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{new Date(getSafe(item, 'donation_items.donations.tanggal_donasi', new Date())).toLocaleDateString('id-ID')}</td>
-                                <td className="px-6 py-4 whitespace-nowrap font-semibold">{getSafe(item, 'beswan.nama_beswan')}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{new Date(getSafe(item, 'tanggal_alokasi', new Date())).toLocaleDateString('id-ID')}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{getSafe(item, 'donation_items.donations.nama_donatur')?.toString()}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{getSafe(item, 'donation_items.kategori_beasiswa.nama_kategori')?.toString()}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{new Date(String(getSafe(item, 'donation_items.donations.tanggal_donasi', ''))).toLocaleDateString('id-ID')}</td>
+                                <td className="px-6 py-4 whitespace-nowrap font-semibold">{getSafe(item, 'beswan.nama_beswan')?.toString()}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{new Date(String(getSafe(item, 'tanggal_alokasi', ''))).toLocaleDateString('id-ID')}</td>
                             </tr>
                         ))}
                     </tbody>
