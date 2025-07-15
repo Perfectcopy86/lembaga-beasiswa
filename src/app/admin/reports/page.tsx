@@ -231,7 +231,7 @@ export default function AdminReportsPage() {
         });
 
         // --- 3. Footer & Tanda Tangan ---
-        let finalY = (doc as any).lastAutoTable.finalY + 15;
+        const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 15;
         const tglSurat = format(new Date(), 'd MMMM yyyy', { locale: id });
 
         doc.setFontSize(11).setFont('normal', 'normal');
