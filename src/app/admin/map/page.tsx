@@ -4,7 +4,7 @@
 import { createClient } from "@/lib/supabase/client"; 
 import React, { useState, useEffect } from 'react';
 import { useRealtimeStatus } from '@/context/realtime-context';
-import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 // --- TYPE DEFINITION ---
 // A specific interface that matches the data structure from your Supabase query
@@ -108,43 +108,42 @@ export default function MapPage() {
     });
 
     return (
-        <div className="container mx-auto py-8">
-            <h1 className="text-3xl font-bold mb-6">Peta Donatur-Penerima</h1>
-            <div className="mb-4">
-            <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari berdasarkan Nama Donatur atau Penerima..."
-                className="w-full px-3 py-2 border rounded-lg text-gray-900 dark:text-gray-50 focus:outline-none"
-            />
-        </div>
-            <div className="bg-card shadow-md rounded-lg overflow-hidden">
-                <Table className="min-w-full divide-y divide-bg-card-200">
-                    <TableHeader className="bg-card-50">
-                        <TableRow>
-                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Nama Donatur</TableHead>
-                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Beasiswa</TableHead>
-                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Tanggal Donasi</TableHead>
-                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Nama Penerima</TableHead>
-                            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-800 dark:text-gray-50 uppercase tracking-wider">Tanggal Alokasi</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <tbody className="bg-card divide-y divide-bg-card-200">
-                      {/* Use the specific type for 'item' */}
-                        {filteredData.map((item: MapDataItem) => (
-                            <tr key={item.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">{getSafe(item, 'donation_items.donations.nama_donatur')?.toString()}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{getSafe(item, 'donation_items.kategori_beasiswa.nama_kategori')?.toString()}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{new Date(String(getSafe(item, 'donation_items.donations.tanggal_donasi', ''))).toLocaleDateString('id-ID')}</td>
-                                <td className="px-6 py-4 whitespace-nowrap font-semibold">{getSafe(item, 'beswan.nama_beswan')?.toString()}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{new Date(String(getSafe(item, 'tanggal_alokasi', ''))).toLocaleDateString('id-ID')}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </div>
-            {mapData.length === 0 && <p className="text-center py-8">Belum ada data alokasi.</p>}
-        </div>
-    );
+    <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-6">Peta Donatur-Penerima</h1>
+        <div className="mb-4">
+            <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari berdasarkan Nama Donatur atau Penerima..."
+                className="w-full px-3 py-2 border rounded-lg text-gray-900 dark:text-gray-50 focus:outline-none"
+            />
+        </div>
+        <div className="rounded-md border">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Nama Donatur</TableHead>
+                        <TableHead>Beasiswa</TableHead>
+                        <TableHead>Tanggal Donasi</TableHead>
+                        <TableHead>Nama Penerima</TableHead>
+                        <TableHead>Tanggal Alokasi</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {filteredData.map((item: MapDataItem) => (
+                        <TableRow key={item.id}>
+                            <TableCell>{getSafe(item, 'donation_items.donations.nama_donatur')?.toString()}</TableCell>
+                            <TableCell>{getSafe(item, 'donation_items.kategori_beasiswa.nama_kategori')?.toString()}</TableCell>
+                            <TableCell>{new Date(String(getSafe(item, 'donation_items.donations.tanggal_donasi', ''))).toLocaleDateString('id-ID')}</TableCell>
+                            <TableCell className="font-semibold">{getSafe(item, 'beswan.nama_beswan')?.toString()}</TableCell>
+                            <TableCell>{new Date(String(getSafe(item, 'tanggal_alokasi', ''))).toLocaleDateString('id-ID')}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+        {mapData.length === 0 && <p className="text-center py-8">Belum ada data alokasi.</p>}
+    </div>
+);
 }
