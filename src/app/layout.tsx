@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { NavigationLoader } from "@/components/ui/navigation-loader"; // 1. Impor komponen
+import { Suspense } from 'react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NavigationLoader /> {/* 2. Tambahkan loader di sini */}
+          <Suspense fallback={null}>
+           <NavigationLoader />
+          </Suspense>
           {children}
         </ThemeProvider>
       </body>
