@@ -154,7 +154,7 @@ export default function ProfileClientPage({ profile: initialProfile, donations: 
                   <p><strong>Donasi Terakhir:</strong> {lastDonationDate ? format(lastDonationDate, 'd MMMM yyyy', { locale: id }) : 'Belum pernah'}</p>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Button onClick={() => setIsEditing(true)}>Edit Profil</Button>
+                    <Button onClick={() => setIsEditing(true)} className="cursor-pointer">Edit Profil</Button>
                     <Button variant="outline" asChild>
                         <Link href="/auth/forgot-password">Ganti Password</Link>
                     </Button>

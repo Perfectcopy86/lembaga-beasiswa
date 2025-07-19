@@ -37,7 +37,7 @@ export function DonationDialog({ kategoriBeasiswa, donation, children, onDataCha
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="cursor-pointer">
         
         {children ? children : <Button>+ Tambah Donasi Baru</Button>}
       </DialogTrigger>

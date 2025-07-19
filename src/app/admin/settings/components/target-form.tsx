@@ -32,7 +32,7 @@ export function TargetSettingsForm({ monthlyTarget, yearlyTarget }: { monthlyTar
         <Input id="yearly_target" name="yearly_target" type="number" defaultValue={yearlyTarget} required />
       </div>
       {message && <p className="text-sm text-muted-foreground">{message}</p>}
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" disabled={isPending}className="cursor-pointer">
         {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
       </Button>
     </form>

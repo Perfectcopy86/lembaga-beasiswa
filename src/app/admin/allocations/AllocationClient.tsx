@@ -184,7 +184,7 @@ interface DonationItem {
                 </div>
             </div>
             <div className="mt-8 flex flex-col items-center">
-                <Button onClick={handleAllocate} disabled={!selectedItem || !selectedBeswan || isPending} size="lg">
+                <Button onClick={handleAllocate} disabled={!selectedItem || !selectedBeswan || isPending} size="lg" className="cursor-pointer">
                     {isPending ? 'Mengalokasikan...' : 'Hubungkan Donasi dengan Beswan'}
                 </Button>
                 {selectedItem && selectedBeswan && (

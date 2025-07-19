@@ -24,6 +24,7 @@ import { PlusCircle, Edit, Trash2, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { useRealtimeStatus } from '@/context/realtime-context'; // 2. Impor hook status
+
 type ExpenseFromDB = {
   id: number;
   penerima: string;
@@ -63,7 +64,8 @@ export default function AdminExpensesPage() {
   const [formMessage, setFormMessage] = useState<{ type: 'success' | 'error', text: unknown } | null>(null);
 
   const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // 3. Gunakan hook
-
+  // --- 2. Tambahkan state untuk mengontrol modal gambar ---
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency', currency: 'IDR', minimumFractionDigits: 0,
@@ -159,7 +161,7 @@ export default function AdminExpensesPage() {
             <CardTitle>Manajemen Pengeluaran</CardTitle>
             <CardDescription>Tambah, edit, atau hapus data pengeluaran.</CardDescription>
           </div>
-          <Button onClick={handleAdd} className="flex items-center gap-2">
+          <Button onClick={handleAdd} className="flex items-center gap-2 cursor-pointer">
             <PlusCircle size={18} />
             Tambah Pengeluaran
           </Button>
@@ -197,17 +199,24 @@ export default function AdminExpensesPage() {
                       <TableCell><span className="whitespace-nowrap rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{expense.kategori}</span></TableCell>
                       <TableCell>{expense.metode}</TableCell>
                       <TableCell>
-                        {expense.bukti ? (
-                          <a href={expense.bukti} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center gap-1 text-sm">
-                            Lihat <ExternalLink size={14} />
-                          </a>
-                        ) : '-'}
-                      </TableCell>
+                      {expense.bukti ? (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setSelectedImage(expense.bukti)}
+                          className="cursor-pointer"
+                        >
+                          Lihat
+                        </Button>
+                      ) : (
+                        '-'
+                      )}
+                    </TableCell>
                       <TableCell className="text-right font-mono">{formatCurrency(expense.jumlah)}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <Button variant="outline" size="icon" onClick={() => handleEdit(expense)}><Edit className="h-4 w-4" /></Button>
-                          <Button variant="destructive" size="icon" onClick={() => handleDelete(expense.id, expense.bukti)} disabled={isPending}><Trash2 className="h-4 w-4" /></Button>
+                          <Button variant="outline" size="icon" onClick={() => handleEdit(expense)} className="cursor-pointer"><Edit className="h-4 w-4" /></Button>
+                          <Button variant="destructive" size="icon" onClick={() => handleDelete(expense.id, expense.bukti)} disabled={isPending}className="cursor-pointer"><Trash2 className="h-4 w-4" /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -219,6 +228,23 @@ export default function AdminExpensesPage() {
             </Table>
           </div>
         </CardContent>
+        {/* --- 4. Tambahkan komponen Dialog di sini --- */}
+            <Dialog open={!!selectedImage} onOpenChange={(isOpen) => { if (!isOpen) { setSelectedImage(null); } }}>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Bukti Transaksi</DialogTitle>
+                </DialogHeader>
+                {selectedImage && (
+                  <div className="mt-4">
+                    <img 
+                      src={selectedImage} 
+                      alt="Bukti Transaksi" 
+                      className="w-full h-auto rounded-md object-contain max-h-[80vh]" 
+                    />
+                  </div>
+                )}
+              </DialogContent>
+      </Dialog>
       </Card>
 
       {/* Modal Form */}
@@ -250,7 +276,7 @@ export default function AdminExpensesPage() {
               <div className="space-y-1">
                 <Label htmlFor="kategori">Kategori</Label>
                 <Select name="kategori" defaultValue={selectedExpense?.kategori} required>
-                    <SelectTrigger><SelectValue placeholder="Pilih kategori..." /></SelectTrigger>
+                    <SelectTrigger className="cursor-pointer"><SelectValue placeholder="Pilih kategori..." /></SelectTrigger>
                     <SelectContent>
                         {expenseCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                     </SelectContent>
@@ -259,7 +285,7 @@ export default function AdminExpensesPage() {
               <div className="space-y-1">
                 <Label htmlFor="metode">Metode</Label>
                 <Select name="metode" defaultValue={selectedExpense?.metode} required>
-                    <SelectTrigger><SelectValue placeholder="Pilih metode..." /></SelectTrigger>
+                    <SelectTrigger className="cursor-pointer"><SelectValue placeholder="Pilih metode..." /></SelectTrigger>
                     <SelectContent>
                         {expenseCategoriesMetode.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                     </SelectContent>
@@ -277,8 +303,8 @@ export default function AdminExpensesPage() {
                 </div>
             )}
             <DialogFooter>
-              <DialogClose asChild><Button type="button" variant="secondary">Batal</Button></DialogClose>
-              <Button type="submit" disabled={isPending}>{isPending ? 'Menyimpan...' : 'Simpan'}</Button>
+              <DialogClose asChild><Button type="button" variant="secondary" className="cursor-pointer">Batal</Button></DialogClose>
+              <Button type="submit" disabled={isPending}className="cursor-pointer">{isPending ? 'Menyimpan...' : 'Simpan'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>

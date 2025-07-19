@@ -15,6 +15,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { useRealtimeStatus } from '@/context/realtime-context'; // Impor hook status
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 // Tipe data diperbarui untuk menyertakan kolom baru
 type ExpenseDetail = {
@@ -35,7 +36,8 @@ export default function DetailsTab() {
   const [search, setSearch] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // Gunakan hook
-
+// --- 2. Tambahkan state untuk mengontrol modal gambar ---
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
   
   // --- AWAL PERUBAHAN UTAMA ---
@@ -150,15 +152,22 @@ export default function DetailsTab() {
                             <TableCell>{expense.deskripsi || '-'}</TableCell>
                             <TableCell>{expense.metode || '-'}</TableCell>
                             <TableCell>
-                                {expense.bukti ? (
-                                    <Button variant="outline" size="sm" asChild>
-                                        <a href={expense.bukti} target="_blank" rel="noopener noreferrer">
-                                            Lihat <ExternalLink className="ml-2 h-3 w-3" />
-                                        </a>
-                                    </Button>
-                                ) : (
-                                    '-'
-                                )}
+                              {expense.bukti ? (
+                                <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => {
+                                  console.log("URL Bukti yang diklik:", expense.bukti);
+                                  console.log("Tipe datanya:", typeof expense.bukti);
+                                  setSelectedImage(expense.bukti);
+                                }}
+                                className="cursor-pointer"
+                              >
+                                Lihat
+                              </Button>
+                              ) : (
+                                '-'
+                              )}
                             </TableCell>
                             <TableCell className="text-right">{formatCurrency(expense.jumlah)}</TableCell>
                         </TableRow>
@@ -170,6 +179,23 @@ export default function DetailsTab() {
             </Table>
         </div>
       </CardContent>
+       {/* --- 4. Tambahkan komponen Dialog di sini --- */}
+       <Dialog open={!!selectedImage} onOpenChange={(isOpen) => { if (!isOpen) { setSelectedImage(null); } }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Bukti Transaksi</DialogTitle>
+          </DialogHeader>
+          {selectedImage && (
+            <div className="mt-4">
+              <img 
+                src={selectedImage} 
+                alt="Bukti Transaksi" 
+                className="w-full h-auto rounded-md object-contain max-h-[80vh]" 
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

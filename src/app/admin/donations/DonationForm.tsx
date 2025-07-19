@@ -137,7 +137,7 @@ export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: Donat
                       <FormLabel>Kategori</FormLabel>
                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="cursor-pointer">
                             <SelectValue placeholder="Pilih kategori..." />
                           </SelectTrigger>
                         </FormControl>
@@ -178,8 +178,9 @@ export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: Donat
                   size="icon"
                   onClick={() => remove(index)}
                   disabled={fields.length <= 1}
+                  className="cursor-pointer"
                 >
-                  <Trash2 className="h-4 w-4 text-destructive"/>
+                  <Trash2 className="h-4 w-4 text-destructive cursor-pointer"/>
                 </Button>
               </div>
             ))}
@@ -189,7 +190,7 @@ export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: Donat
             variant="outline"
             size="sm"
             onClick={() => append({ kategori_id: '', kuantitas: 1 })}
-            className="mt-4"
+            className="mt-4 cursor-pointer"
           >
             <Plus className="mr-2 h-4 w-4" />
             Tambah Item

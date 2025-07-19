@@ -284,7 +284,7 @@ export default function AdminReportsPage() {
                 <Button
                   variant={'outline'}
                   className={cn(
-                    'w-[300px] justify-start text-left font-normal',
+                    'w-[300px] justify-start text-left font-normal cursor-pointer',
                     !csvDateRange && 'text-muted-foreground'
                   )}
                 >
@@ -314,7 +314,7 @@ export default function AdminReportsPage() {
                 />
               </PopoverContent>
             </Popover>
-            <Button onClick={handleGenerateCsvReport} disabled={isCsvGenerating || !csvDateRange?.from || !csvDateRange?.to}>
+            <Button onClick={handleGenerateCsvReport} disabled={isCsvGenerating || !csvDateRange?.from || !csvDateRange?.to}className="cursor-pointer">
               {isCsvGenerating ? 'Membuat Laporan...' : 'Buat Laporan'}
             </Button>
           </div>
@@ -367,7 +367,7 @@ export default function AdminReportsPage() {
         <CardContent className="space-y-4">
           <div className="flex flex-wrap items-center gap-4">
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-              <SelectTrigger className="w-[300px]">
+              <SelectTrigger className="w-[300px] cursor-pointer">
                 <SelectValue placeholder="Pilih bulan laporan" />
               </SelectTrigger>
               <SelectContent>
@@ -378,7 +378,7 @@ export default function AdminReportsPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={handleGeneratePdfReport} disabled={isPdfGenerating || !selectedMonth}>
+            <Button onClick={handleGeneratePdfReport} disabled={isPdfGenerating || !selectedMonth}className="cursor-pointer">
               {isPdfGenerating ? 'Membuat Laporan...' : 'Buat Laporan PDF'}
             </Button>
           </div>

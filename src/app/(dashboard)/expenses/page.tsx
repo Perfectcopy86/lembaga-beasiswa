@@ -15,9 +15,9 @@ export default function ExpensesPage() {
       </div>
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="overview" className="cursor-pointer">Overview</TabsTrigger>
+          <TabsTrigger value="analytics" className="cursor-pointer">Analytics</TabsTrigger>
+          <TabsTrigger value="details" className="cursor-pointer">Details</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
           <OverviewTab />

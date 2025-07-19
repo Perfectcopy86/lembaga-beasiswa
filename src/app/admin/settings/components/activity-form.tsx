@@ -28,7 +28,7 @@ export function ActivityThresholdForm({ defaultValue }: { defaultValue: string }
         <Input id="threshold_days" name="threshold_days" type="number" defaultValue={defaultValue} required />
       </div>
       {message && <p className="text-sm text-muted-foreground">{message}</p>}
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" disabled={isPending}className="cursor-pointer">
         {isPending ? 'Menyimpan...' : 'Simpan Pengaturan'}
       </Button>
     </form>

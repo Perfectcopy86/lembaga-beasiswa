@@ -74,7 +74,7 @@ export default function NotificationBell() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="relative">
+        <Button variant="outline" size="icon" className="relative cursor-pointer">
           <Bell className="h-5 w-5" />
           {/* Opsional: Tambahkan titik notifikasi jika ada donasi baru */}
           {donations.length > 0 && (

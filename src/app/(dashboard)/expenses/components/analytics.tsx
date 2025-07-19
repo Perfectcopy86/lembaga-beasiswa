@@ -189,10 +189,10 @@ export default function AnalyticsTab() {
                     </p>
                 </div>
                 <div className="flex space-x-2 mt-4 sm:mt-0">
-                    <Button variant={dateFilter === '6m' ? 'default' : 'outline'} onClick={() => setDateFilter('6m')}>6 Bulan</Button>
-                    <Button variant={dateFilter === 'ytd' ? 'default' : 'outline'} onClick={() => setDateFilter('ytd')}>Tahun Ini</Button>
-                    <Button variant={dateFilter === '1y' ? 'default' : 'outline'} onClick={() => setDateFilter('1y')}>1 Tahun</Button>
-                    <Button variant={dateFilter === 'all' ? 'default' : 'outline'} onClick={() => setDateFilter('all')}>Semua</Button>
+                    <Button variant={dateFilter === '6m' ? 'default' : 'outline'} onClick={() => setDateFilter('6m')} className="cursor-pointer">6 Bulan</Button>
+                    <Button variant={dateFilter === 'ytd' ? 'default' : 'outline'} onClick={() => setDateFilter('ytd')}className="cursor-pointer">Tahun Ini</Button>
+                    <Button variant={dateFilter === '1y' ? 'default' : 'outline'} onClick={() => setDateFilter('1y')}className="cursor-pointer">1 Tahun</Button>
+                    <Button variant={dateFilter === 'all' ? 'default' : 'outline'} onClick={() => setDateFilter('all')}className="cursor-pointer">Semua</Button>
                 </div>
             </div>
     
