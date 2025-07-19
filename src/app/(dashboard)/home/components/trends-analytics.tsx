@@ -186,7 +186,7 @@ export default function TrendsAnalyticsTab() {
                                             boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                                         }}
                                     />
-                                    <Legend onClick={(e) => e.dataKey && handleLegendClick(e.dataKey)} />
+                                    <Legend onClick={(e) => e.dataKey && handleLegendClick(e.dataKey)} wrapperStyle={{ cursor: 'pointer' }}/>
                                         {availableYears.map((year, index) => {
                                             const isFocused = year === focusedYear;
                                             const defaultColor = CHART_COLORS[index % CHART_COLORS.length];
@@ -223,8 +223,8 @@ export default function TrendsAnalyticsTab() {
                             <CardDescription>Intensitas donasi berdasarkan bulan dan hari.</CardDescription>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button size="sm" variant={heatmapMode === 'nominal' ? 'default' : 'outline'} onClick={() => setHeatmapMode('nominal')}>Nominal</Button>
-                            <Button size="sm" variant={heatmapMode === 'frekuensi' ? 'default' : 'outline'} onClick={() => setHeatmapMode('frekuensi')}>Frekuensi</Button>
+                            <Button size="sm" variant={heatmapMode === 'nominal' ? 'default' : 'outline'} onClick={() => setHeatmapMode('nominal')}className="cursor-pointer">Nominal</Button>
+                            <Button size="sm" variant={heatmapMode === 'frekuensi' ? 'default' : 'outline'} onClick={() => setHeatmapMode('frekuensi')}className="cursor-pointer">Frekuensi</Button>
                         </div>
                     </div>
                 </CardHeader>

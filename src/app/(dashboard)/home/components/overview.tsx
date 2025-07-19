@@ -272,9 +272,9 @@ export default function OverviewTab() {
                     <CardTitle>Statistik Donasi</CardTitle>
                     <p className="text-sm text-muted-foreground">Visualisasi tren total donasi berdasarkan periode. </p>
                     <div className="flex items-center gap-2">
-                        <Button variant={lineChartFilter === 'yearly' ? 'default' : 'outline'} size="sm" onClick={() => setLineChartFilter('yearly')}>Tahunan</Button>
-                        <Button variant={lineChartFilter === 'monthly' ? 'default' : 'outline'} size="sm" onClick={() => setLineChartFilter('monthly')}>Bulanan</Button>
-                        <Button variant={lineChartFilter === 'weekly' ? 'default' : 'outline'} size="sm" onClick={() => setLineChartFilter('weekly')}>Mingguan</Button>
+                        <Button variant={lineChartFilter === 'yearly' ? 'default' : 'outline'} size="sm" onClick={() => setLineChartFilter('yearly')}className="cursor-pointer">Tahunan</Button>
+                        <Button variant={lineChartFilter === 'monthly' ? 'default' : 'outline'} size="sm" onClick={() => setLineChartFilter('monthly')}className="cursor-pointer">Bulanan</Button>
+                        <Button variant={lineChartFilter === 'weekly' ? 'default' : 'outline'} size="sm" onClick={() => setLineChartFilter('weekly')}className="cursor-pointer">Mingguan</Button>
                     </div>
                 </CardHeader>
                 <CardContent className="pl-2 h-[350px]">
@@ -299,8 +299,8 @@ export default function OverviewTab() {
                     <CardTitle>Progres Donasi</CardTitle>
                     <p className="text-sm text-muted-foreground">Pencapaian donasi terhadap target periode.</p>
                      <div className="flex items-center gap-2">
-                         <Button variant={gaugeChartFilter === 'this_year' ? 'default' : 'outline'} size="sm" onClick={() => setGaugeChartFilter('this_year')}>Tahun Ini</Button>
-                         <Button variant={gaugeChartFilter === 'this_month' ? 'default' : 'outline'} size="sm" onClick={() => setGaugeChartFilter('this_month')}>Bulan Ini</Button>
+                         <Button variant={gaugeChartFilter === 'this_year' ? 'default' : 'outline'} size="sm" onClick={() => setGaugeChartFilter('this_year')}className="cursor-pointer">Tahun Ini</Button>
+                         <Button variant={gaugeChartFilter === 'this_month' ? 'default' : 'outline'} size="sm" onClick={() => setGaugeChartFilter('this_month')}className="cursor-pointer">Bulan Ini</Button>
                      </div>
                 </CardHeader>
                 <CardContent className="h-[350px] flex flex-col items-center justify-center">

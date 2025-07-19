@@ -14,7 +14,7 @@ import {
   LabelList
 } from 'recharts';
 import { useRealtimeStatus } from '@/context/realtime-context'; // Impor hook status
-
+import { useTheme } from 'next-themes';
 // Tipe data donasi yang dibutuhkan
 type Donation = {
   jumlah: number;
@@ -30,7 +30,8 @@ export default function BehaviorTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // Gunakan hook
-
+  const { theme } = useTheme();
+  const hoverColor = theme === 'dark' ? '#334155' : '#f1f5f9';
   const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
 
   // --- FUNGSI PROSES DATA ---
@@ -145,7 +146,7 @@ export default function BehaviorTab() {
                                 <YAxis type="category" dataKey="name" stroke="#888888" fontSize={12} width={100} />
                                 <RechartsTooltip 
                                     formatter={(value) => formatCurrency(value as number)} 
-                                    cursor={{ fill: 'hsl(var(--muted))' }}
+                                    cursor={{ fill: hoverColor }}
                                     contentStyle={{ backgroundColor: '#ffffff', color: '#0f172a', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}
                                 />
                                 
@@ -184,7 +185,7 @@ export default function BehaviorTab() {
                                 <YAxis type="category" dataKey="name" stroke="#888888" fontSize={12} width={110} />
                                 <RechartsTooltip 
                                     formatter={(value) => `${value} transaksi`} 
-                                    cursor={{ fill: 'hsl(var(--muted))' }}
+                                    cursor={{ fill: hoverColor }}
                                     contentStyle={{ backgroundColor: '#ffffff', color: '#0f172a', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}
                                 />
                                 <Bar dataKey="value" fill={PRIMARY_CHART_COLOR} radius={[0, 4, 4, 0]}>

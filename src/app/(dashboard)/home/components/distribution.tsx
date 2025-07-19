@@ -18,6 +18,7 @@ import {
   Cell,
 } from 'recharts';
 import { useRealtimeStatus } from '@/context/realtime-context'; // Impor hook status
+import { useTheme } from 'next-themes';
 
 // Tipe data
 type Donation = {
@@ -71,7 +72,8 @@ export default function DistributionTab() {
   const [error, setError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // Gunakan hook
-
+  const { theme } = useTheme();
+  const hoverColor = theme === 'dark' ? '#334155' : '#f1f5f9';
   const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
 
   const availableYears = useMemo(() => {
@@ -188,7 +190,7 @@ export default function DistributionTab() {
                         <CardDescription>Total donasi per kuartal.</CardDescription>
                     </div>
                     <Select value={selectedYear} onValueChange={setSelectedYear}>
-                        <SelectTrigger className="w-[120px]">
+                        <SelectTrigger className="w-[120px] cursor-pointer">
                             <SelectValue placeholder="Pilih tahun" />
                         </SelectTrigger>
                         <SelectContent>
@@ -235,7 +237,7 @@ export default function DistributionTab() {
                                 <BarChart data={consistencyData} layout="vertical" margin={{ left: 20 }}>
                                     <XAxis type="number" stroke="#888888" fontSize={12} allowDecimals={false} />
                                     <YAxis type="category" dataKey="name" stroke="#888888" fontSize={12} width={80} />
-                                    <RechartsTooltip formatter={(value) => `${value} donatur`} cursor={{ fill: 'hsl(var(--muted))' }} 
+                                    <RechartsTooltip formatter={(value) => `${value} donatur`} cursor={{ fill: hoverColor }} 
                                       contentStyle={{
                                         backgroundColor: '#ffffff',
                                         color: '#0f172a',
