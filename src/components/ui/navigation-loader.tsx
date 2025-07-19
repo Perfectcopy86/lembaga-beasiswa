@@ -28,11 +28,10 @@ export function NavigationLoader() {
          }
       }
     };
-    
     // Cek tombol submit form
-    const handleFormSubmit = (_: SubmitEvent) => {
+    const handleFormSubmit = () => { // <--- PERBAIKAN DI SINI
         setLoading(true);
-    }
+      }
 
     document.addEventListener('click', handleLinkClick);
     document.addEventListener('submit', handleFormSubmit);
