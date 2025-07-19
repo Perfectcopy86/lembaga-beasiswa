@@ -30,7 +30,7 @@ export function NavigationLoader() {
     };
     
     // Cek tombol submit form
-    const handleFormSubmit = (e: SubmitEvent) => {
+    const handleFormSubmit = (_: SubmitEvent) => {
         setLoading(true);
     }
 
