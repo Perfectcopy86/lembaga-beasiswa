@@ -1,7 +1,7 @@
 // src/app/auth/page.tsx
 "use client"
 
-import { useState, Suspense } from 'react' // <-- Import Suspense
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { login, signup } from './actions'
 import { Button } from "@/components/ui/button"
@@ -15,21 +15,19 @@ import {
 } from "@/components/ui/select"
 import Link from 'next/link'
 
-// Create a new component for the form logic
 function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false)
   const searchParams = useSearchParams()
   const message = searchParams.get('message')
 
   return (
-    <div
-      className={`bg-white rounded-3xl shadow-2xl relative overflow-hidden w-[768px] max-w-full min-h-[520px] transition-all duration-700 ease-in-out ${isSignUp ? 'md:w-[768px]' : ''}`}
-    >
+    // MODIFICATION: Added padding for mobile and adjusted container for responsiveness
+    <div className="relative w-full max-w-4xl min-h-[580px] md:min-h-[520px] bg-white rounded-3xl shadow-2xl overflow-hidden">
       {/* FORM REGISTER */}
       <div
-        className={`absolute top-0 h-full transition-all duration-700 ease-in-out left-0 w-1/2 ${isSignUp ? 'translate-x-full opacity-100 z-[5]' : 'opacity-0 z-[1]'}`}
+        className={`absolute top-0 h-full transition-all duration-700 ease-in-out w-full md:w-1/2 left-0 ${isSignUp ? 'translate-x-0 md:translate-x-full opacity-100 z-[5]' : 'opacity-0 z-[1] pointer-events-none'}`}
       >
-        <form action={signup} className="bg-white flex items-center justify-center flex-col px-10 h-full text-center">
+        <form action={signup} className="bg-white flex items-center justify-center flex-col px-8 md:px-10 h-full text-center">
           <h1 className="text-2xl font-bold mb-4 text-black">Buat Akun Baru</h1>
 
           {message && isSignUp && (
@@ -58,14 +56,22 @@ function AuthForm() {
           <Button type="submit" className="bg-blue-700 text-white text-sm py-3 px-11 border border-transparent rounded-lg font-semibold tracking-wider uppercase mt-4 cursor-pointer">
             Daftar
           </Button>
+
+           {/* Mobile only: Switch to Sign In */}
+           <p className="md:hidden mt-4 text-sm text-gray-600">
+              Sudah punya akun?{' '}
+              <Button variant="link" onClick={() => setIsSignUp(false)} className="p-0 h-auto text-blue-600">
+                Masuk
+              </Button>
+            </p>
         </form>
       </div>
 
       {/* FORM LOGIN */}
       <div
-        className={`absolute top-0 h-full transition-all duration-700 ease-in-out left-0 w-1/2 z-[2] ${!isSignUp ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`absolute top-0 h-full transition-all duration-700 ease-in-out w-full md:w-1/2 left-0 z-[2] ${isSignUp ? '-translate-x-full md:-translate-x-0 opacity-0 pointer-events-none' : 'translate-x-0 opacity-100'}`}
       >
-        <form action={login} className="bg-white flex items-center justify-center flex-col px-10 h-full text-center">
+        <form action={login} className="bg-white flex items-center justify-center flex-col px-8 md:px-10 h-full text-center">
           <h1 className="text-2xl font-bold mb-4 text-black">Masuk</h1>
 
           {message && !isSignUp && (
@@ -84,11 +90,19 @@ function AuthForm() {
           <Button type="submit" className="bg-blue-700 text-white text-sm py-3 px-11 border border-transparent rounded-lg font-semibold tracking-wider uppercase mt-4 cursor-pointer">
             Masuk
           </Button>
+
+           {/* Mobile only: Switch to Sign Up */}
+           <p className="md:hidden mt-4 text-sm text-gray-600">
+              Belum punya akun?{' '}
+              <Button variant="link" onClick={() => setIsSignUp(true)} className="p-0 h-auto text-blue-600">
+                Daftar
+              </Button>
+            </p>
         </form>
       </div>
 
-      {/* TOGGLE CONTAINER */}
-      <div className={`absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-700 ease-in-out z-50 ${isSignUp ? '-translate-x-full' : 'translate-x-0'}`}>
+      {/* TOGGLE CONTAINER (Hidden on Mobile) */}
+      <div className={`absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-700 ease-in-out z-50 hidden md:block ${isSignUp ? '-translate-x-full' : 'translate-x-0'}`}>
         <div 
           className={`bg-gradient-to-r from-blue-800 to-blue-500 text-white relative -left-full h-full w-[200%] transform transition-transform duration-700 ease-in-out ${isSignUp ? 'translate-x-1/2' : 'translate-x-0'}`}
         >
@@ -127,7 +141,8 @@ function AuthForm() {
 // Wrap the new component in Suspense
 export default function AuthPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-slate-300 font-sans">
+    // MODIFICATION: Added padding for mobile view
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-slate-300 font-sans p-4">
       <Suspense fallback={<div>Loading...</div>}>
         <AuthForm />
       </Suspense>

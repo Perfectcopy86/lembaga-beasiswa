@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { useRealtimeStatus } from '@/context/realtime-context'; // Impor hook
+import { useRealtimeStatus } from '@/context/realtime-context';
 
-// Tipe untuk data donasi, dikembalikan seperti semula
+// Tipe untuk data donasi
 type DonationDisplay = {
   id: number;
   tanggal_donasi: string;
@@ -18,7 +18,7 @@ type DonationDisplay = {
   keterangan: string | null;
 };
 
-// Mengembalikan konstanta untuk paginasi
+// Konstanta untuk paginasi
 const ITEMS_PER_PAGE = 10; 
 
 export default function DonationsPage() {
@@ -27,7 +27,7 @@ export default function DonationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mengembalikan state untuk paginasi
+  // State untuk paginasi
   const [page, setPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0); 
 
@@ -45,17 +45,14 @@ export default function DonationsPage() {
     minimumFractionDigits: 0
   }).format(value);
 
-  // Memperbaiki fungsi fetch data dengan paginasi dan error handling
+  // Fungsi fetch data dengan paginasi dan error handling
   const fetchDonations = useCallback(async (pageIndex: number) => {
     try {
-      // Tidak set loading agar refresh lebih mulus, kecuali saat pertama kali
-      // setLoading(true); 
       setError(null);
 
       const from = pageIndex * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
 
-      // KEMBALIKAN QUERY SEPERTI SEMULA, tanpa filter status
       const { data, error, count } = await supabase
         .from('donations')
         .select('id, tanggal_donasi, nama_donatur, jumlah, keterangan', { count: 'exact' })
@@ -72,7 +69,7 @@ export default function DonationsPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase]); // Dependency hanya supabase
+  }, [supabase]);
 
   // Efek untuk fetch data saat halaman berubah
   useEffect(() => {
@@ -82,8 +79,6 @@ export default function DonationsPage() {
   // Efek untuk real-time dan reconnect
   useEffect(() => {
     const handleDataChange = () => {
-        // Jika ada perubahan, selalu fetch halaman pertama (0)
-        // atau halaman saat ini jika Anda ingin tetap di halaman yang sama
         fetchDonations(page);
     };
 
@@ -110,13 +105,19 @@ export default function DonationsPage() {
         <CardDescription>Daftar semua donasi yang telah tercatat.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
+        {/*
+          PERUBAHAN UTAMA:
+          - Menghapus div pembungkus.
+          - Menambahkan `table-fixed` dan `w-full` ke komponen <Table>.
+        */}
+        <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow>
-              <TableHead>Tanggal</TableHead>
-              <TableHead>Nama Donatur</TableHead>
+              {/* Anda bisa mengatur lebar kolom secara manual jika perlu */}
+              <TableHead className="w-[25%]">Tanggal</TableHead>
+              <TableHead className="w-[20%]">Donatur</TableHead>
               <TableHead>Keterangan</TableHead>
-              <TableHead className="text-right">Jumlah</TableHead>
+              <TableHead className="text-right w-[25%]">Jumlah</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -127,9 +128,13 @@ export default function DonationsPage() {
             ) : donations.length > 0 ? (
               donations.map((donation) => (
                 <TableRow key={donation.id}>
-                  <TableCell>{format(new Date(donation.tanggal_donasi), 'd MMMM yyyy', { locale: id })}</TableCell>
+                  <TableCell>{format(new Date(donation.tanggal_donasi), 'd MMM yyyy', { locale: id })}</TableCell>
                   <TableCell>{censorName(donation.nama_donatur)}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">{donation.keterangan || '-'}</TableCell>
+                  {/*
+                    PERUBAHAN UTAMA:
+                    - Menggunakan `break-words` agar teks keterangan tidak merusak layout.
+                  */}
+                  <TableCell className="break-words">{donation.keterangan || '-'}</TableCell>
                   <TableCell className="text-right">{formatCurrency(donation.jumlah)}</TableCell>
                 </TableRow>
               ))
@@ -139,9 +144,9 @@ export default function DonationsPage() {
           </TableBody>
         </Table>
       </CardContent>
-      {/* Mengembalikan UI Paginasi */}
+      {/* Footer tetap responsif */}
       <CardFooter>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
             <div className="text-xs text-muted-foreground">
                 Halaman {page + 1} dari {pageCount}
             </div>

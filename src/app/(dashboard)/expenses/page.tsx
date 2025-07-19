@@ -6,7 +6,8 @@ import DetailsTab from "./components/details";
 
 export default function ExpensesPage() {
   return (
-    <div className="flex flex-col gap-4">
+    // TAMBAHKAN `overflow-hidden` DI SINI
+    <div className="flex flex-col gap-4 overflow-hidden">
       <div className="space-y-1">
         <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">Pengeluaran</h1>
         <p className="text-muted-foreground">

@@ -63,7 +63,7 @@ export function MobileSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="sm:max-w-xs">
-        <nav className="grid gap-6 text-lg font-medium">
+        <nav className="grid gap-6 pt-8 text-lg font-medium">
           {/* === BAGIAN YANG DIPERBARUI === */}
           <Link
             href={isAdmin ? "/admin" : "/home"}

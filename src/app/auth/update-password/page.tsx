@@ -17,7 +17,6 @@ export default function UpdatePasswordPage() {
     const result = await updatePassword(formData)
     setMessage(result)
     if (result.success) {
-      // Redirect to login page after a short delay
       setTimeout(() => {
         router.push('/auth')
       }, 2000)
@@ -25,8 +24,10 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Card className="w-[400px]">
+    // MODIFICATION: Added padding for mobile view
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+      {/* MODIFICATION: Responsive card width */}
+      <Card className="w-full max-w-sm">
         <form action={handleSubmit}>
           <CardHeader>
             <CardTitle>Buat Password Baru</CardTitle>

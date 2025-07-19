@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Crown, Heart, Repeat, ArrowUp, ArrowDown } from 'lucide-react';
 import { useRealtimeStatus } from '@/context/realtime-context'; // Impor hook status
 
-// --- Tipe Data ---
+// --- Tipe Data (Tidak Berubah) ---
 type Donation = {
   jumlah: number;
   nama_donatur: string;
@@ -38,7 +38,7 @@ export default function TopPerformersTab() {
 
   const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
 
-  // --- FUNGSI PROSES DATA ---
+  // --- Fungsi Proses Data (Tidak Berubah) ---
   const performanceData = useMemo((): PerformanceMetrics | null => {
     if (donations.length === 0) return null;
 
@@ -77,18 +77,18 @@ export default function TopPerformersTab() {
     };
   }, [donations]);
 
-  // --- SIMULASI DATA PERIODE SEBELUMNYA ---
+  // --- Simulasi Data (Tidak Berubah) ---
   const previousPerformanceData = useMemo((): Partial<PerformanceMetrics> => {
     if (!performanceData) return {};
     return {
         recurringDonors: Math.max(0, performanceData.recurringDonors - Math.round(Math.random() * 5) - 2),
-        avgDonationAmount: performanceData.avgDonationAmount * (1 - (Math.random() * 0.1 - 0.05)), // +/- 5%
-        avgTotalPerDonor: performanceData.avgTotalPerDonor * (1 - (Math.random() * 0.1 - 0.05)), // +/- 5%
+        avgDonationAmount: performanceData.avgDonationAmount * (1 - (Math.random() * 0.1 - 0.05)),
+        avgTotalPerDonor: performanceData.avgTotalPerDonor * (1 - (Math.random() * 0.1 - 0.05)),
     }
   }, [performanceData]);
 
 
-  // --- AWAL PERUBAHAN UTAMA ---
+  // --- Fetching Data (Tidak Berubah) ---
   const fetchData = useCallback(async () => {
     try {
       setError(null);
@@ -104,21 +104,16 @@ export default function TopPerformersTab() {
 
   useEffect(() => {
     fetchData();
-
     const channel = supabase.channel('top-performers-reconnect').on('postgres_changes', { event: '*', schema: 'public', table: 'donations' }, fetchData).subscribe();
-    
     addReconnectListener(fetchData);
-
     return () => { 
       supabase.removeChannel(channel); 
       removeReconnectListener(fetchData);
     };
   }, [supabase, fetchData, addReconnectListener, removeReconnectListener]);
-  // --- AKHIR PERUBAHAN UTAMA ---
 
 
-  // --- KOMPONEN-KOMPONEN KECIL ---
-
+  // --- Komponen Kecil (Tidak Berubah) ---
   const DonorList = ({ title, data, isCurrency = false }: { title: string, data: TopDonor[], isCurrency?: boolean }) => {
     const maxValue = Math.max(...data.map(d => d.value), 0);
 
@@ -131,10 +126,14 @@ export default function TopPerformersTab() {
                         <Avatar className="h-9 w-9">
                             <AvatarFallback>{donor.nama.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 space-y-1">
-                            <div className="flex justify-between items-baseline">
-                                <p className="text-sm font-medium truncate pr-2">{donor.nama}</p>
-                                <p className="text-sm font-bold">
+                        <div className="flex-1 space-y-1 overflow-hidden"> {/* Ditambahkan overflow-hidden */}
+                            <div className="flex justify-between items-baseline gap-4"> {/* Ditambahkan gap-4 */}
+                                
+                                {/* ===== KUNCI PERUBAHAN DI SINI ===== */}
+                                <p className="text-sm font-medium truncate min-w-0">{donor.nama}</p>
+                                
+                                {/* Ditambahkan flex-shrink-0 agar nominal tidak ikut menyusut */}
+                                <p className="text-sm font-bold flex-shrink-0">
                                     {isCurrency ? formatCurrency(donor.value) : `${donor.value}x`}
                                 </p>
                             </div>
@@ -156,7 +155,6 @@ export default function TopPerformersTab() {
     const currentValue = parseFloat(value.replace(/[^0-9,-]+/g,""));
     const change = previousValue != null && previousValue > 0 ? ((currentValue - previousValue) / previousValue) * 100 : 0;
     const isPositive = change >= 0;
-
     return (
         <div className="flex items-center gap-4">
             <div className="text-muted-foreground">{icon}</div>
@@ -164,12 +162,7 @@ export default function TopPerformersTab() {
                 <p className="text-sm text-muted-foreground">{title}</p>
                 <div className="flex items-baseline gap-2">
                     <p className="text-2xl font-bold">{value}</p>
-                    {previousValue != null && (
-                         <div className={`flex items-center text-xs font-semibold ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                            {isPositive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-                            {change.toFixed(1)}%
-                         </div>
-                    )}
+                    {previousValue != null && ( <div className={`flex items-center text-xs font-semibold ${isPositive ? 'text-green-500' : 'text-red-500'}`}>{isPositive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}{change.toFixed(1)}%</div> )}
                 </div>
             </div>
         </div>
@@ -188,8 +181,8 @@ export default function TopPerformersTab() {
             <CardDescription>Ringkasan performa dan donatur paling aktif dengan tren perbandingan.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-            {/* Metrik Utama dengan Konteks */}
-            <div className="grid gap-6 sm:grid-cols-3">
+            {/* Perubahan: Metrik Utama menjadi 1 kolom di mobile, 3 di desktop. */}
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
                 <KpiCard
                     title="Donatur Berulang"
                     value={performanceData.recurringDonors.toString()}
@@ -210,11 +203,10 @@ export default function TopPerformersTab() {
                 />
             </div>
 
-            {/* Garis Pemisah Visual */}
             <Separator className="my-6" />
 
-            {/* Daftar Top 5 dengan Grafik Batang */}
-            <div className="grid gap-8 md:grid-cols-2">
+            {/* Perubahan: Daftar Top 5 menjadi 1 kolom di mobile, 2 di desktop. */}
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <DonorList title="Top 5 Donatur (Jumlah Donasi)" data={performanceData.topByFrequency} />
                 <DonorList title="Top 5 Donatur (Total Nominal)" data={performanceData.topByAmount} isCurrency={true} />
             </div>

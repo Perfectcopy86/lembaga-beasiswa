@@ -14,10 +14,9 @@ import { Calendar as CalendarIcon} from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { useRealtimeStatus } from '@/context/realtime-context'; // Impor hook status
+import { useRealtimeStatus } from '@/context/realtime-context';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-// Tipe data diperbarui untuk menyertakan kolom baru
 type ExpenseDetail = {
   id: number;
   tanggal: string;
@@ -35,14 +34,11 @@ export default function DetailsTab() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // Gunakan hook
-// --- 2. Tambahkan state untuk mengontrol modal gambar ---
+  const { addReconnectListener, removeReconnectListener } = useRealtimeStatus();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
   
-  // --- AWAL PERUBAHAN UTAMA ---
   const fetchData = useCallback(async () => {
-    // Tidak perlu setLoading(true) agar refresh data lebih mulus
     const { data, error } = await supabase
         .from('expenses')
         .select('id, tanggal, penerima, deskripsi, jumlah, kategori, metode, bukti')
@@ -53,7 +49,7 @@ export default function DetailsTab() {
     } else {
         setExpenses(data || []);
     }
-    setLoading(false); // Selalu set loading false setelah fetch selesai
+    setLoading(false);
   }, [supabase]);
   
   useEffect(() => {
@@ -75,7 +71,6 @@ export default function DetailsTab() {
       removeReconnectListener(fetchData);
     };
   }, [supabase, fetchData, addReconnectListener, removeReconnectListener]);
-  // --- AKHIR PERUBAHAN UTAMA ---
 
   const filteredExpenses = useMemo(() => {
     return expenses.filter(expense => {
@@ -127,7 +122,8 @@ export default function DetailsTab() {
             </Popover>
             <Button variant="ghost" onClick={() => { setSearch(""); setDateRange(undefined); }}>Reset</Button>
         </div>
-        <div className="rounded-md border">
+        {/* --- AWAL PERUBAHAN UNTUK RESPONSIVE --- */}
+        <div className="rounded-md border relative w-full overflow-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -156,11 +152,7 @@ export default function DetailsTab() {
                                 <Button 
                                 variant="outline" 
                                 size="sm" 
-                                onClick={() => {
-                                  console.log("URL Bukti yang diklik:", expense.bukti);
-                                  console.log("Tipe datanya:", typeof expense.bukti);
-                                  setSelectedImage(expense.bukti);
-                                }}
+                                onClick={() => setSelectedImage(expense.bukti)}
                                 className="cursor-pointer"
                               >
                                 Lihat
@@ -178,8 +170,8 @@ export default function DetailsTab() {
                 </TableBody>
             </Table>
         </div>
+        {/* --- AKHIR PERUBAHAN UNTUK RESPONSIVE --- */}
       </CardContent>
-       {/* --- 4. Tambahkan komponen Dialog di sini --- */}
        <Dialog open={!!selectedImage} onOpenChange={(isOpen) => { if (!isOpen) { setSelectedImage(null); } }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>

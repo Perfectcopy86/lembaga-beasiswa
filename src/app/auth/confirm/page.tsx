@@ -1,3 +1,4 @@
+// src/app/auth/confirm/page.tsx
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import {
@@ -10,9 +11,11 @@ import {
 
 export default function ConfirmPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Card className="w-[400px]">
-        <CardHeader>
+    // MODIFICATION: Added padding for mobile view
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+      {/* MODIFICATION: Responsive card width */}
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
           <CardTitle>Pendaftaran Berhasil</CardTitle>
           <CardDescription>
             Silakan periksa email Anda untuk konfirmasi.
@@ -26,8 +29,8 @@ export default function ConfirmPage() {
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Jika Anda tidak menerima email dalam beberapa menit, periksa folder spam atau coba daftar ulang.
           </p>
-          <div className="flex justify-center">
-            <Button asChild>
+          <div className="flex justify-center pt-2">
+            <Button asChild className="w-full">
               <Link href="/auth">Kembali ke Halaman Login</Link>
             </Button>
           </div>
