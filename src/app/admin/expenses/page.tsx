@@ -20,7 +20,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { PlusCircle, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { useRealtimeStatus } from '@/context/realtime-context'; // 2. Impor hook status
