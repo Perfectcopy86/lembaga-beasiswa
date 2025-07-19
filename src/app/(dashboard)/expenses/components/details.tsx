@@ -10,7 +10,7 @@ import { id } from 'date-fns/locale';
 import { DateRange } from "react-day-picker";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Calendar as CalendarIcon, ExternalLink } from 'lucide-react';
+import { Calendar as CalendarIcon} from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
