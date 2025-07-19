@@ -4,7 +4,7 @@ import Sidebar from '@/components/sidebar';
 import { SidebarProvider } from '@/context/sidebar-context';
 import { MainContainer } from './main-container';
 import Header from '@/components/header';
-import { RealtimeProvider } from '@/context/realtime-context'; // <-- Impor provider baru
+import { RealtimeProvider } from '@/context/realtime-context';
 
 export default function DashboardLayout({
   children,
@@ -13,8 +13,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      {/* Bungkus dengan RealtimeProvider di sini */}
-      <RealtimeProvider> 
+      <RealtimeProvider>
         <div className="flex min-h-screen w-full flex-col bg-muted/40">
           <Sidebar />
           <MainContainer>
