@@ -1,20 +1,15 @@
 // src/app/not-found.tsx
 import { Suspense } from 'react';
-import { NotFoundClient } from './not-found-client'; // Impor komponen baru
+import { NotFoundClient } from './not-found-client';
 
-// Komponen fallback sederhana untuk ditampilkan saat loading
-function LoadingFallback() {
-    return (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-            <h1>Memuat...</h1>
-        </div>
-    );
+// A simple loading fallback
+function Loading() {
+    return <div>Loading...</div>;
 }
 
-// Halaman not-found utama
 export default function NotFound() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={<Loading />}>
       <NotFoundClient />
     </Suspense>
   );
