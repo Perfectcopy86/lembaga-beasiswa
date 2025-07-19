@@ -1,7 +1,9 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import "./globals.css"; // Pastikan baris ini ada
+import "./globals.css";
 import { ThemeProvider } from "next-themes";
+import { NavigationLoader } from "@/components/ui/navigation-loader"; // 1. Impor komponen
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +28,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NavigationLoader /> {/* 2. Tambahkan loader di sini */}
           {children}
         </ThemeProvider>
       </body>

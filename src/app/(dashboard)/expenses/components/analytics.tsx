@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, Legend, ReferenceLine } from "recharts";
 import { useRealtimeStatus } from '@/context/realtime-context';
 
-// Tipe data yang seragam untuk pemasukan dan pengeluaran
 type DataPoint = {
   tanggal: string;
   jumlah: number;
@@ -23,9 +22,7 @@ export default function AnalyticsTab() {
 
     const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
     
-    // --- AWAL PERUBAHAN UTAMA ---
     const fetchData = useCallback(async () => {
-        // Tidak set loading di sini agar refresh mulus
         const [expenseRes, donationRes] = await Promise.all([
             supabase.from('expenses').select('tanggal, jumlah'),
             supabase.from('donations').select('tanggal_donasi, jumlah')
@@ -37,7 +34,7 @@ export default function AnalyticsTab() {
             jumlah: d.jumlah
         }));
         setDonations(formattedDonations as DataPoint[]);
-        setLoading(false); // Hanya set loading false setelah fetch pertama kali
+        setLoading(false);
     }, [supabase]);
 
     useEffect(() => {
@@ -64,7 +61,6 @@ export default function AnalyticsTab() {
           removeReconnectListener(fetchData);
         };
     }, [supabase, fetchData, addReconnectListener, removeReconnectListener]);
-    // --- AKHIR PERUBAHAN UTAMA ---
 
     const filteredData = useMemo(() => {
         const now = new Date();
@@ -181,20 +177,23 @@ export default function AnalyticsTab() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+             {/* --- AWAL PERUBAHAN UNTUK RESPONSIVE --- */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight">Dashboard Analitik</h2>
                     <p className="text-muted-foreground">
                         Pilih rentang waktu untuk melihat ringkasan data.
                     </p>
                 </div>
-                <div className="flex space-x-2 mt-4 sm:mt-0">
+                {/* Menambahkan flex-wrap dan justify-start agar rapi saat turun baris */}
+                <div className="flex flex-wrap gap-2 sm:mt-0 justify-start sm:justify-end">
                     <Button variant={dateFilter === '6m' ? 'default' : 'outline'} onClick={() => setDateFilter('6m')} className="cursor-pointer">6 Bulan</Button>
                     <Button variant={dateFilter === 'ytd' ? 'default' : 'outline'} onClick={() => setDateFilter('ytd')}className="cursor-pointer">Tahun Ini</Button>
                     <Button variant={dateFilter === '1y' ? 'default' : 'outline'} onClick={() => setDateFilter('1y')}className="cursor-pointer">1 Tahun</Button>
                     <Button variant={dateFilter === 'all' ? 'default' : 'outline'} onClick={() => setDateFilter('all')}className="cursor-pointer">Semua</Button>
                 </div>
             </div>
+             {/* --- AKHIR PERUBAHAN UNTUK RESPONSIVE --- */}
     
             {comboChartData.length > 0 ? (
                 <Card>
