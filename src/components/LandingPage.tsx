@@ -44,12 +44,12 @@ export default function LandingPage() {
         <div
           className="absolute inset-0 opacity-30"
           style={{
-            background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.2) 25%, rgba(236, 72, 153, 0.1) 50%, transparent 70%)`,
+            background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(59, 130, 246, 0.3) 0%, rgba(6, 182, 212, 0.2) 35%, transparent 70%)`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-cyan-900/20 to-black" />
 
-        {/* Floating Particles - Perbaikan di sini */}
+        {/* Floating Particles */}
         {isClient &&
           [...Array(50)].map((_, i) => (
             <div
@@ -70,12 +70,12 @@ export default function LandingPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-500">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center transform rotate-12 hover:rotate-0 transition-transform duration-500">
                 <GraduationCap className="w-7 h-7 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full animate-ping" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-ping" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
               Lembaga Beasiswa IKA UPI
             </span>
           </div>
@@ -87,13 +87,13 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto text-center">
           {/* Floating Badge */}
           <div
-            className={`inline-flex items-center bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/30 text-blue-300 px-6 py-3 rounded-full text-sm font-medium mb-12 transform transition-all duration-1000 ${
+            className={`inline-flex items-center bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm border border-blue-500/30 text-blue-300 px-6 py-3 rounded-full text-sm font-medium mb-12 transform transition-all duration-1000 ${
               isVisible
                 ? "translate-y-0 opacity-100"
                 : "translate-y-10 opacity-0"
             }`}
           >
-            <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+            <Sparkles className="w-4 h-4 mr-2 text-cyan-400 animate-spin" />
             Platform Donasi Beasiswa IKA UPI
             <TrendingUp className="w-4 h-4 ml-2" />
           </div>
@@ -107,16 +107,16 @@ export default function LandingPage() {
             }`}
             style={{
               textShadow:
-                "0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(147, 51, 234, 0.3)",
+                "0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(6, 182, 212, 0.3)",
               transform: `perspective(1000px) rotateX(${
                 mousePosition.y * 0.02 - 1
               }deg) rotateY(${mousePosition.x * 0.02 - 1}deg)`,
             }}
           >
-            <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-blue-400 via-cyan-400 to-white bg-clip-text text-transparent">
               MASA DEPAN
             </span>
-            <span className="block bg-gradient-to-r from-pink-400 via-rose-400 to-orange-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-white via-cyan-300 to-blue-300 bg-clip-text text-transparent">
               PENDIDIKAN
             </span>
           </h1>
@@ -145,7 +145,7 @@ export default function LandingPage() {
               onClick={handleGoToHome}
               className="group relative px-12 py-6 text-xl font-bold text-white rounded-2xl overflow-hidden transform hover:scale-105 transition-all duration-300"
               style={{
-                background: "linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899)",
+                background: "linear-gradient(45deg, #3b82f6, #06b6d4, #0891b2)",
                 boxShadow:
                   "0 20px 40px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)",
                 transform: `perspective(1000px) rotateX(${
@@ -153,7 +153,7 @@ export default function LandingPage() {
                 }deg) rotateY(${mousePosition.x * 0.01}deg) scale(1)`,
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-600 to-cyan-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative flex items-center justify-center">
                 <BookOpen className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform" />
                 Masuki Dashboard
@@ -179,7 +179,7 @@ export default function LandingPage() {
                   }deg)`,
                 }}
               >
-                <item.icon className="w-5 h-5 text-green-400 mr-2" />
+                <item.icon className="w-5 h-5 text-cyan-400 mr-2" />
                 {item.text}
               </div>
             ))}
