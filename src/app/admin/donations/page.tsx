@@ -47,7 +47,7 @@ export default function DonationsPage() {
       setKategoriBeasiswa(kategoriResult.data || []);
       setUserProfiles(profilesResult.data || []);
 
-    } catch (err: unknown) {
+    } catch (_err: unknown) {
       setError("Gagal memuat data. Coba muat ulang halaman.");
     } finally {
       setLoading(false);
