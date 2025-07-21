@@ -1,17 +1,22 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Bell } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
-// Tipe data untuk donasi
+// --- PERUBAHAN DIMULAI ---
+
+// Tipe data untuk donasi diperbarui
 type RecentDonation = {
   nama_donatur: string;
   tanggal_donasi: string;
   jumlah: number;
+  is_anonymous: boolean; // Menambahkan field is_anonymous
 };
+
+// --- PERUBAHAN SELESAI ---
 
 // Fungsi untuk sensor nama
 const censorName = (name: string) => {
@@ -43,42 +48,68 @@ export default function NotificationBell() {
   const [donations, setDonations] = useState<RecentDonation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // --- PERUBAHAN DIMULAI ---
+
+  // Menggunakan useCallback agar fungsi tidak dibuat ulang pada setiap render
+  const fetchRecentDonations = useCallback(async () => {
+    try {
+      // Tidak set loading ke true di sini agar update realtime lebih mulus
+      setError(null);
+
+      const { data, error } = await supabase
+        .from('donations')
+        // Meminta field is_anonymous dari tabel
+        .select('nama_donatur, tanggal_donasi, jumlah, is_anonymous')
+        .order('tanggal_donasi', { ascending: false })
+        .limit(5);
+
+      if (error) {
+        throw new Error("Gagal mengambil data donasi terbaru.");
+      }
+
+      setDonations(data as RecentDonation[]);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } finally {
+      // Hanya set loading ke false setelah fetch pertama kali
+      if (loading) setLoading(false);
+    }
+  }, [supabase, loading]); // `loading` ditambahkan sebagai dependensi
 
   useEffect(() => {
-    const fetchRecentDonations = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const { data, error } = await supabase
-          .from('donations')
-          .select('nama_donatur, tanggal_donasi, jumlah')
-          .order('tanggal_donasi', { ascending: false }) // Urutkan dari yang terbaru
-          .limit(5); // Ambil 5 data teratas
-
-        if (error) {
-          throw new Error("Gagal mengambil data donasi terbaru.");
-        }
-
-        setDonations(data as RecentDonation[]);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    // Panggil fungsi untuk mengambil data awal
     fetchRecentDonations();
-  }, [supabase]);
+
+    // Buat channel untuk mendengarkan perubahan pada tabel donasi
+    const channel = supabase
+      .channel('realtime-donations-bell')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'donations' },
+        (payload) => {
+          // Ketika ada perubahan, panggil kembali fetchRecentDonations
+          console.log('Perubahan terdeteksi:', payload);
+          fetchRecentDonations();
+        }
+      )
+      .subscribe();
+
+    // Membersihkan subscription saat komponen di-unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase, fetchRecentDonations]);
+  
+  // --- PERUBAHAN SELESAI ---
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="icon" className="relative cursor-pointer">
           <Bell className="h-5 w-5" />
-          {/* Opsional: Tambahkan titik notifikasi jika ada donasi baru */}
           {donations.length > 0 && (
-             <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+             <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 animate-ping" />
           )}
         </Button>
       </PopoverTrigger>
@@ -99,7 +130,12 @@ export default function NotificationBell() {
               donations.map((donation, index) => (
                 <div key={index} className="flex items-start justify-between p-2 rounded-md hover:bg-muted">
                   <div className="flex-1">
-                    <p className="text-sm font-semibold">{censorName(donation.nama_donatur)}</p>
+                    {/* --- PERUBAHAN DIMULAI --- */}
+                    {/* Logika untuk menampilkan nama berdasarkan is_anonymous */}
+                    <p className="text-sm font-semibold">
+                      {donation.is_anonymous ? censorName(donation.nama_donatur) : donation.nama_donatur}
+                    </p>
+                    {/* --- PERUBAHAN SELESAI --- */}
                     <p className="text-xs text-muted-foreground">{formatDate(donation.tanggal_donasi)}</p>
                   </div>
                   <p className="text-sm font-bold text-green-600">{formatCurrency(donation.jumlah)}</p>

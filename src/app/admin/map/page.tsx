@@ -27,7 +27,6 @@ interface MapDataItem {
   } | null;
 }
 
-
 // Fungsi getMapData sekarang akan menggunakan client-side Supabase client
 async function getMapData(): Promise<MapDataItem[]> { // Return a promise of our specific type
     // createClient() di sini akan memanggil versi dari @/lib/supabase/client
@@ -59,6 +58,7 @@ async function getMapData(): Promise<MapDataItem[]> { // Return a promise of our
 export default function MapPage() {
     const [mapData, setMapData] = useState<MapDataItem[]>([]); // Use the specific type here
     const [searchQuery, setSearchQuery] = useState(''); 
+    const [selectedCategory, setSelectedCategory] = useState<string>(''); // State for category filter
     const { addReconnectListener, removeReconnectListener } = useRealtimeStatus();
 
     useEffect(() => {
@@ -98,19 +98,28 @@ export default function MapPage() {
     // Using ?? is safer than || because it won't replace falsy values like ''.
     return current ?? fallback;
 }
+    
+    // Get unique categories for the filter dropdown
+    const uniqueCategories = Array.from(new Set(mapData.map(item => getSafe(item, 'donation_items.kategori_beasiswa.nama_kategori', '') as string).filter(Boolean)));
+
 
     const filteredData = mapData.filter(item => {
-        const namaDonatur = getSafe(item, 'donation_items.donations.nama_donatur', '').toString().toLowerCase();
-        const namaPenerima = getSafe(item, 'beswan.nama_beswan', '').toString().toLowerCase();
-        const query = searchQuery.toLowerCase();
-    
-        return namaDonatur.includes(query) || namaPenerima.includes(query);
+        const namaDonatur = getSafe(item, 'donation_items.donations.nama_donatur', '').toString().toLowerCase();
+        const namaPenerima = getSafe(item, 'beswan.nama_beswan', '').toString().toLowerCase();
+        const kategoriBeasiswa = getSafe(item, 'donation_items.kategori_beasiswa.nama_kategori', '').toString();
+        const query = searchQuery.toLowerCase();
+
+        // Check if item matches search query and selected category
+        const matchesSearchQuery = namaDonatur.includes(query) || namaPenerima.includes(query);
+        const matchesCategory = selectedCategory ? kategoriBeasiswa === selectedCategory : true; // If no category is selected, it's a match
+
+        return matchesSearchQuery && matchesCategory;
     });
 
     return (
     <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold mb-6">Peta Donatur-Penerima</h1>
-        <div className="mb-4">
+        <div className="flex gap-4 mb-4">
             <input
                 type="text"
                 value={searchQuery}
@@ -118,6 +127,16 @@ export default function MapPage() {
                 placeholder="Cari berdasarkan Nama Donatur atau Penerima..."
                 className="w-full px-3 py-2 border rounded-lg text-gray-900 dark:text-gray-50 focus:outline-none"
             />
+             <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg text-gray-900 dark:text-gray-500 focus:outline-none"
+            >
+                <option value="">Semua Kategori</option>
+                {uniqueCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                ))}
+            </select>
         </div>
         <div className="rounded-md border">
             <Table>

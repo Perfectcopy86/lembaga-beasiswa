@@ -27,6 +27,7 @@ export type KategoriBeasiswa = {
     jumlah: number;
     keterangan?: string | null;
     user_id?: string | null;
+    is_anonymous?: boolean;
     created_at: string;
   };
   
@@ -57,4 +58,5 @@ export type DonationItemWithRelations = DonationItem & {
 // Tipe ini adalah tipe lengkap untuk donasi beserta semua relasinya
 export type DonasiWithRelations = Donasi & {
   donation_items: DonationItemWithRelations[];
+  profiles: { nama_donatur: string } | null; // Tambahkan relasi ke tabel profiles
 };

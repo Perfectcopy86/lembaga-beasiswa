@@ -10,19 +10,20 @@ import { KategoriBeasiswa, DonasiWithRelations } from '@/lib/types';
 import { deleteDonation } from './actions';
 import { toast } from 'sonner';
 import { DonationDialog } from './DonationDialog';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, User } from 'lucide-react'; // Import ikon User
+
 
 type DonationsTableProps = {
   donations: DonasiWithRelations[];
   kategoriBeasiswa: KategoriBeasiswa[];
+  userProfiles: { id: string; nama_donatur: string }[]; // Terima prop userProfiles
   onDataChange: () => void;
 };
 
-export function DonationsTable({ donations, kategoriBeasiswa, onDataChange  }: DonationsTableProps) {
+export function DonationsTable({ donations, kategoriBeasiswa, userProfiles, onDataChange  }: DonationsTableProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = async (id: number) => {
-    // Ganti window.confirm dengan dialog kustom jika memungkinkan
     if (confirm('Apakah Anda yakin ingin menghapus donasi ini? Semua alokasi terkait akan ikut terhapus.')) {
       startTransition(async () => {
         const result = await deleteDonation(id);
@@ -44,7 +45,6 @@ export function DonationsTable({ donations, kategoriBeasiswa, onDataChange  }: D
     }).format(amount);
   };
 
-  // Fungsi untuk mengelompokkan item dan menghitung kuantitas untuk tampilan
   const getGroupedItems = (items: DonasiWithRelations['donation_items']) => {
     if (!items) return [];
     
@@ -69,6 +69,10 @@ export function DonationsTable({ donations, kategoriBeasiswa, onDataChange  }: D
         <TableRow>
           <TableHead className="w-[150px]">Tanggal Donasi</TableHead>
           <TableHead>Nama Donatur</TableHead>
+          {/* --- PERUBAHAN DIMULAI --- */}
+          <TableHead>Pengguna Terkait</TableHead>
+          {/* --- PERUBAHAN SELESAI --- */}
+          <TableHead>Status Anonim</TableHead>
           <TableHead>Detail Donasi/Kategori</TableHead>
           <TableHead className="text-right">Jumlah Total</TableHead>
           <TableHead className="w-[120px]">Aksi</TableHead>
@@ -84,6 +88,25 @@ export function DonationsTable({ donations, kategoriBeasiswa, onDataChange  }: D
                 })}
               </TableCell>
               <TableCell className="font-medium">{donation.nama_donatur}</TableCell>
+              {/* --- PERUBAHAN DIMULAI --- */}
+              <TableCell>
+                {donation.profiles ? (
+                  <div className="flex items-center gap-2">
+                     <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{donation.profiles.nama_donatur}</span>
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
+              </TableCell>
+              {/* --- PERUBAHAN SELESAI --- */}
+              <TableCell>
+                {donation.is_anonymous ? (
+                  <Badge variant="default">Ya, Anonim</Badge>
+                ) : (
+                  <Badge variant="secondary">Tidak</Badge>
+                )}
+              </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
                   {getGroupedItems(donation.donation_items).map((groupedItem, index) => (
@@ -98,6 +121,7 @@ export function DonationsTable({ donations, kategoriBeasiswa, onDataChange  }: D
                 <DonationDialog 
                   kategoriBeasiswa={kategoriBeasiswa} 
                   donation={donation}
+                  userProfiles={userProfiles} // Teruskan prop
                   onDataChange={onDataChange}
                 >
                   <Button variant="outline" size="sm">
@@ -119,7 +143,7 @@ export function DonationsTable({ donations, kategoriBeasiswa, onDataChange  }: D
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={5} className="h-24 text-center">
+            <TableCell colSpan={7} className="h-24 text-center">
               Belum ada data donasi.
             </TableCell>
           </TableRow>

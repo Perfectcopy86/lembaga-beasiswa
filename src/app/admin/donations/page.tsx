@@ -10,9 +10,17 @@ import { DonationsTable } from './DonationsTable';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 
+// Definisikan tipe untuk user profile
+type UserProfile = {
+  id: string;
+  nama_donatur: string;
+};
+
 export default function DonationsPage() {
   const [donations, setDonations] = useState<DonasiWithRelations[]>([]);
   const [kategoriBeasiswa, setKategoriBeasiswa] = useState<KategoriBeasiswa[]>([]);
+  // --- PERUBAHAN DIMULAI ---
+  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,21 +31,30 @@ export default function DonationsPage() {
   const fetchData = useCallback(async () => {
     setError(null);
     try {
-      const [donationsResult, kategoriResult] = await Promise.all([
+      const [donationsResult, kategoriResult, profilesResult] = await Promise.all([
         supabase
           .from("donations")
-          .select("*, donation_items(*, kategori_beasiswa(nama_kategori))")
+          // Sertakan relasi ke profiles
+          .select("*, profiles(nama_donatur), donation_items(*, kategori_beasiswa(nama_kategori))")
           .order('tanggal_donasi', { ascending: false }),
         supabase
           .from("kategori_beasiswa")
-          .select("*")
+          .select("*"),
+        // Ambil data user dari tabel profiles
+        supabase
+          .from("profiles")
+          .select("id, nama_donatur")
+          .order('nama_donatur', { ascending: true })
       ]);
 
       if (donationsResult.error) throw donationsResult.error;
       if (kategoriResult.error) throw kategoriResult.error;
+      if (profilesResult.error) throw profilesResult.error;
       
       setDonations(donationsResult.data || []);
       setKategoriBeasiswa(kategoriResult.data || []);
+      setUserProfiles(profilesResult.data || []); // Simpan data user
+
     } catch (err: unknown) {
       console.error("Error fetching donations data:", err);
       setError("Gagal memuat data. Periksa koneksi Anda.");
@@ -45,6 +62,7 @@ export default function DonationsPage() {
       setLoading(false);
     }
   }, [supabase]);
+  // --- PERUBAHAN SELESAI ---
 
   useEffect(() => {
     fetchData();
@@ -61,6 +79,11 @@ export default function DonationsPage() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'donation_items' },
+        () => fetchData()
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' }, // Dengarkan perubahan profiles juga
         () => fetchData()
       )
       .subscribe();
@@ -80,10 +103,13 @@ export default function DonationsPage() {
     return donations.filter(donation => {
       const searchTerm = searchQuery.toLowerCase();
       const donaturMatch = donation.nama_donatur.toLowerCase().includes(searchTerm);
+      // --- PERUBAHAN DIMULAI ---
+      const userMatch = donation.profiles?.nama_donatur.toLowerCase().includes(searchTerm);
       const kategoriMatch = donation.donation_items.some(item =>
         item.kategori_beasiswa?.nama_kategori.toLowerCase().includes(searchTerm)
       );
-      return donaturMatch || kategoriMatch;
+      return donaturMatch || kategoriMatch || userMatch;
+      // --- PERUBAHAN SELESAI ---
     });
   }, [donations, searchQuery]);
 
@@ -97,8 +123,9 @@ export default function DonationsPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <DonationDialog 
+        <DonationDialog 
             kategoriBeasiswa={kategoriBeasiswa} 
+            userProfiles={userProfiles} // Teruskan data user
             onDataChange={fetchData} 
           />
         </div>
@@ -126,7 +153,8 @@ export default function DonationsPage() {
         <div className="rounded-md border">
           <DonationsTable 
             donations={filteredDonations} 
-            kategoriBeasiswa={kategoriBeasiswa} 
+            kategoriBeasiswa={kategoriBeasiswa}
+            userProfiles={userProfiles} // Teruskan data user
             onDataChange={fetchData}
           />
         </div>

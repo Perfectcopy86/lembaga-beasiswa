@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, ReactNode } from 'react'; // Import ReactNode
+import { useState, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,24 +12,34 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { DonationForm } from './DonationForm';
-import { KategoriBeasiswa, DonasiWithRelations } from '@/lib/types'; // Import DonasiWithRelations
+import { KategoriBeasiswa, DonasiWithRelations } from '@/lib/types';
 
+
+// --- PERUBAHAN DIMULAI ---
+
+// Definisikan tipe untuk user profile agar komponen ini tahu bentuk datanya
+type UserProfile = {
+  id: string;
+  nama_donatur: string;
+};
 
 type DonationDialogProps = {
   kategoriBeasiswa: KategoriBeasiswa[];
+  userProfiles: UserProfile[]; // Tambahkan prop userProfiles
   donation?: DonasiWithRelations; 
   children?: ReactNode; 
-  onDataChange?: () => void; // TAMBAH: Definisikan tipe untuk prop baru
+  onDataChange?: () => void;
 };
 
-export function DonationDialog({ kategoriBeasiswa, donation, children, onDataChange }: DonationDialogProps) {
+export function DonationDialog({ kategoriBeasiswa, userProfiles, donation, children, onDataChange }: DonationDialogProps) {
+// --- PERUBAHAN SELESAI ---
   const [open, setOpen] = useState(false);
 
   
   const handleFormSubmit = () => {
     setOpen(false); 
     if (onDataChange) {
-        onDataChange(); // PANGGIL: Panggil fungsi refresh data jika ada
+        onDataChange();
       }
   };
 
@@ -46,11 +56,14 @@ export function DonationDialog({ kategoriBeasiswa, donation, children, onDataCha
         
           <DialogTitle>{isEditMode ? 'Edit Donasi' : 'Formulir Donasi Baru'}</DialogTitle>
         </DialogHeader>
+        {/* --- PERUBAHAN DIMULAI --- */}
         <DonationForm
           kategoriBeasiswa={kategoriBeasiswa}
+          userProfiles={userProfiles} // Teruskan prop userProfiles ke DonationForm
           onFormSubmit={handleFormSubmit}
           donation={donation} 
         />
+        {/* --- PERUBAHAN SELESAI --- */}
       </DialogContent>
     </Dialog>
   );

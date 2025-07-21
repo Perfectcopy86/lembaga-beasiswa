@@ -4,10 +4,14 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-// Skema validasi dari form tetap sama, karena form masih mengirim kuantitas
+// --- PERUBAHAN DIMULAI ---
+// Skema validasi dari form diperbarui
 const donationSchema = z.object({
   nama_donatur: z.string().min(1, 'Nama donatur harus diisi.'),
   tanggal_donasi: z.string().min(1, 'Tanggal donasi harus diisi.'),
+  is_anonymous: z.boolean(),
+  // Tambahkan user_id, boleh kosong
+  user_id: z.string().uuid().nullable().optional(), 
   items: z.array(z.object({
       kategori_id: z.coerce.number().min(1, 'Kategori harus dipilih.'),
       kuantitas: z.coerce.number().min(1, 'Kuantitas minimal 1.'),
@@ -21,17 +25,23 @@ export async function upsertDonationWithItems(
 ) {
   const supabase = await createClient();
 
+  const rawUserId = formData.get('user_id');
+
   const validated = donationSchema.safeParse({
     nama_donatur: formData.get('nama_donatur'),
     tanggal_donasi: formData.get('tanggal_donasi'),
+    is_anonymous: formData.get('is_anonymous') === 'true',
+    // Kirim null jika string kosong, agar sesuai dengan skema
+    user_id: rawUserId && typeof rawUserId === 'string' && rawUserId.length > 0 ? rawUserId : null,
     items: JSON.parse(formData.get('items') as string),
   });
+// --- PERUBAHAN SELESAI ---
 
   if (!validated.success) {
     return { error: validated.error.flatten().fieldErrors };
   }
   
-  const { nama_donatur, tanggal_donasi, items } = validated.data;
+  const { nama_donatur, tanggal_donasi, items, is_anonymous, user_id } = validated.data;
   
   try {
     // Menghitung total donasi (logika ini tetap sama)
@@ -55,31 +65,41 @@ export async function upsertDonationWithItems(
 
     let donationId: number;
 
-    if (id) {
-      // MODE EDIT
-      const { data: updatedDonation, error: updateError } = await supabase
-        .from('donations')
-        .update({ nama_donatur, tanggal_donasi, jumlah: totalDonasi })
-        .eq('id', id)
-        .select('id')
-        .single();
-      if (updateError) throw updateError;
-      donationId = updatedDonation.id;
-      
-      // Hapus semua item lama yang terkait dengan donasi ini
-      const { error: deleteItemsError } = await supabase.from('donation_items').delete().eq('donation_id', donationId);
-      if (deleteItemsError) throw deleteItemsError;
+    // --- PERUBAHAN DIMULAI ---
+    // Siapkan data untuk di-insert atau di-update
+    const donationPayload = {
+      nama_donatur,
+      tanggal_donasi,
+      jumlah: totalDonasi,
+      is_anonymous,
+      user_id, // Sertakan user_id
+  };
 
-    } else {
-      // MODE INSERT
-      const { data: newDonation, error: insertError } = await supabase
-        .from('donations')
-        .insert({ nama_donatur, tanggal_donasi, jumlah: totalDonasi })
-        .select('id')
-        .single();
-      if (insertError) throw insertError;
-      donationId = newDonation.id;
-    }
+  if (id) {
+    // MODE EDIT
+    const { data: updatedDonation, error: updateError } = await supabase
+      .from('donations')
+      .update(donationPayload) // Gunakan payload
+      .eq('id', id)
+      .select('id')
+      .single();
+    if (updateError) throw updateError;
+    donationId = updatedDonation.id;
+    
+    const { error: deleteItemsError } = await supabase.from('donation_items').delete().eq('donation_id', donationId);
+    if (deleteItemsError) throw deleteItemsError;
+
+  } else {
+    // MODE INSERT
+    const { data: newDonation, error: insertError } = await supabase
+      .from('donations')
+      .insert(donationPayload) // Gunakan payload
+      .select('id')
+      .single();
+    if (insertError) throw insertError;
+    donationId = newDonation.id;
+  }
+  // --- PERUBAHAN SELESAI ---
 
     // "Ledakkan" item dari form menjadi baris-baris individual
     const individualItemsToInsert = items.flatMap(item => {
@@ -101,6 +121,8 @@ export async function upsertDonationWithItems(
 
   revalidatePath('/admin/donations');
   revalidatePath('/admin/allocations'); // Revalidasi halaman alokasi juga
+  revalidatePath('/donations'); // <-- Revalidasi halaman publik
+  revalidatePath('/profile'); // Revalidasi halaman profil juga
   return { success: true };
 }
 

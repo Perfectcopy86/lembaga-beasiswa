@@ -14,11 +14,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus } from 'lucide-react';
 
 const formSchema = z.object({
   nama_donatur: z.string().min(1, 'Nama donatur wajib diisi.'),
   tanggal_donasi: z.string().min(1, 'Tanggal donasi wajib diisi.'),
+  is_anonymous: z.boolean().default(true),
+  user_id: z.string().optional(), 
   items: z.array(z.object({
       kategori_id: z.string().min(1, 'Pilih kategori.'),
       kuantitas: z.coerce.number().min(1, 'Min. 1.'),
@@ -26,13 +29,18 @@ const formSchema = z.object({
     .min(1, 'Harus ada minimal 1 item donasi.'),
 });
 
+type UserProfile = {
+    id: string;
+    nama_donatur: string;
+};
+
 type DonationFormProps = {
   kategoriBeasiswa: KategoriBeasiswa[];
+  userProfiles: UserProfile[]; 
   onFormSubmit: () => void;
   donation?: DonasiWithRelations;
 };
 
-// Fungsi untuk mengelompokkan item dari DB untuk ditampilkan di form
 const getGroupedItemsForForm = (items: DonasiWithRelations['donation_items']) => {
     if (!items || items.length === 0) {
         return [{ kategori_id: '', kuantitas: 1 }];
@@ -53,7 +61,7 @@ const getGroupedItemsForForm = (items: DonasiWithRelations['donation_items']) =>
     return Object.values(grouped);
 };
 
-export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: DonationFormProps) {
+export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, donation }: DonationFormProps) {
   const [isPending, startTransition] = useTransition();
   const isEditMode = !!donation;
 
@@ -62,6 +70,8 @@ export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: Donat
     defaultValues: {
       nama_donatur: donation?.nama_donatur || '',
       tanggal_donasi: donation ? new Date(donation.tanggal_donasi).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      is_anonymous: donation?.is_anonymous || true,
+      user_id: donation?.user_id || '', 
       items: isEditMode ? getGroupedItemsForForm(donation.donation_items) : [{ kategori_id: '', kuantitas: 1 }],
     },
     mode: "onChange",
@@ -76,6 +86,10 @@ export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: Donat
     const formData = new FormData();
     formData.append('nama_donatur', values.nama_donatur);
     formData.append('tanggal_donasi', values.tanggal_donasi);
+    formData.append('is_anonymous', String(values.is_anonymous));
+    if (values.user_id) {
+        formData.append('user_id', values.user_id);
+    }
     formData.append('items', JSON.stringify(values.items));
 
     startTransition(async () => {
@@ -123,6 +137,59 @@ export function DonationForm({ kategoriBeasiswa, onFormSubmit, donation }: Donat
               )}
             />
         </div>
+
+        <FormField
+            control={form.control}
+            name="user_id"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Pengguna Terkait (Opsional)</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                    <SelectTrigger>
+                    <SelectValue placeholder="Pilih pengguna jika donasi dari user terdaftar..." />
+                    </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                    {/* --- PERUBAHAN DI SINI: Baris yang menyebabkan error dihapus --- */}
+                    {/* <SelectItem value="">-- Tidak Terkait --</SelectItem> */} 
+                    {userProfiles.map((profile) => (
+                    <SelectItem key={profile.id} value={profile.id}>
+                        {profile.nama_donatur}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground pt-1">
+                    Isi ini agar donasi tercatat di riwayat pengguna.
+                </p>
+                <FormMessage />
+            </FormItem>
+            )}
+        />
+
+        <FormField
+          control={form.control}
+          name="is_anonymous"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  Jadikan donasi ini Anonim
+                </FormLabel>
+                <p className="text-xs text-muted-foreground">
+                   Jika dicentang, nama donatur akan disensor di halaman publik.
+                </p>
+              </div>
+            </FormItem>
+          )}
+        />
 
         <div>
           <h3 className="text-sm font-medium mb-2">Item Donasi</h3>
