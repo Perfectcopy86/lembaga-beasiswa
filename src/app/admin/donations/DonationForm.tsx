@@ -109,7 +109,8 @@ export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, don
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
+        {/* Bagian Nama Donatur dan Tanggal */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="nama_donatur"
@@ -117,7 +118,7 @@ export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, don
                 <FormItem>
                   <FormLabel>Nama Donatur</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan nama donatur..." {...field} />
+                    <Input placeholder="Masukkan nama..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,6 +139,7 @@ export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, don
             />
         </div>
 
+        {/* Bagian Pengguna Terkait */}
         <FormField
             control={form.control}
             name="user_id"
@@ -147,12 +149,10 @@ export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, don
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                     <SelectTrigger>
-                    <SelectValue placeholder="Pilih pengguna jika donasi dari user terdaftar..." />
+                    <SelectValue placeholder="Pilih pengguna..." />
                     </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                    {/* --- PERUBAHAN DI SINI: Baris yang menyebabkan error dihapus --- */}
-                    {/* <SelectItem value="">-- Tidak Terkait --</SelectItem> */} 
                     {userProfiles.map((profile) => (
                     <SelectItem key={profile.id} value={profile.id}>
                         {profile.nama_donatur}
@@ -160,14 +160,91 @@ export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, don
                     ))}
                 </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground pt-1">
-                    Isi ini agar donasi tercatat di riwayat pengguna.
-                </p>
                 <FormMessage />
             </FormItem>
             )}
         />
-
+        
+        {/* Bagian Item Donasi */}
+        <div>
+          <h3 className="text-sm font-medium mb-2">Item Donasi</h3>
+          <div className="space-y-4">
+            {fields.map((field, index) => (
+              // --- PERUBAHAN UTAMA DI SINI ---
+              // Menghilangkan padding, hanya menggunakan gap.
+              // Menggunakan border untuk memisahkan item secara visual.
+              <div key={field.id} className="border-t pt-4 space-y-4">
+                 <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2">
+                    <FormField
+                    control={form.control}
+                    name={`items.${index}.kategori_id`}
+                    render={({ field }) => (
+                        <FormItem className="flex-1 w-full">
+                        <FormLabel>Kategori</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Pilih kategori beasiswa..." />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            {kategoriBeasiswa.map((k) => (
+                                <SelectItem key={k.id} value={String(k.id)}>
+                                {k.nama_kategori} (Rp.{new Intl.NumberFormat('id-ID').format(k.nominal_per_slot)})
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name={`items.${index}.kuantitas`}
+                    render={({ field }) => (
+                        <FormItem className="w-full sm:w-24">
+                        <FormLabel>Qty</FormLabel>
+                        <FormControl>
+                            <Input 
+                            type="number" 
+                            min="1" 
+                            className="text-center" 
+                            {...field}
+                            value={field.value?.toString() || ''}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => remove(index)}
+                    disabled={fields.length <= 1}
+                    className="shrink-0 self-end sm:self-end"
+                    >
+                    <Trash2 className="h-4 w-4 text-destructive"/>
+                    </Button>
+                 </div>
+              </div>
+            ))}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => append({ kategori_id: '', kuantitas: 1 })}
+            className="mt-4"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Tambah Item
+          </Button>
+        </div>
+        
+        {/* Bagian Checkbox Anonim */}
         <FormField
           control={form.control}
           name="is_anonymous"
@@ -184,88 +261,16 @@ export function DonationForm({ kategoriBeasiswa, userProfiles, onFormSubmit, don
                   Jadikan donasi ini Anonim
                 </FormLabel>
                 <p className="text-xs text-muted-foreground">
-                   Jika dicentang, nama donatur akan disensor di halaman publik.
+                   Nama donatur akan disensor di halaman publik.
                 </p>
               </div>
             </FormItem>
           )}
         />
 
-        <div>
-          <h3 className="text-sm font-medium mb-2">Item Donasi</h3>
-          <div className="space-y-4">
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex items-end gap-2 p-3 border rounded-lg bg-muted/50">
-                <FormField
-                  control={form.control}
-                  name={`items.${index}.kategori_id`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Kategori</FormLabel>
-                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="cursor-pointer">
-                            <SelectValue placeholder="Pilih kategori..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {kategoriBeasiswa.map((k) => (
-                            <SelectItem key={k.id} value={String(k.id)}>
-                              {k.nama_kategori} (Rp.{new Intl.NumberFormat('id-ID').format(k.nominal_per_slot)})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name={`items.${index}.kuantitas`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Qty</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          min="1" 
-                          className="w-20 text-center" 
-                          {...field}
-                          value={field.value?.toString() || ''}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => remove(index)}
-                  disabled={fields.length <= 1}
-                  className="cursor-pointer"
-                >
-                  <Trash2 className="h-4 w-4 text-destructive cursor-pointer"/>
-                </Button>
-              </div>
-            ))}
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => append({ kategori_id: '', kuantitas: 1 })}
-            className="mt-4 cursor-pointer"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Tambah Item
-          </Button>
-        </div>
-
+        {/* Tombol Simpan */}
         <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
               {isPending ? 'Menyimpan...' : (isEditMode ? 'Perbarui Donasi' : 'Simpan Donasi')}
             </Button>
         </div>

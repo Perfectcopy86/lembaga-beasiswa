@@ -1,7 +1,7 @@
 // src/app/admin/expenses/page.tsx
 'use client';
 
-import React, { useState, useEffect, useTransition, useCallback } from 'react'; // 1. Impor useCallback
+import React, { useState, useEffect, useTransition, useCallback } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 import { deleteExpense, saveExpense } from './actions';
@@ -23,7 +23,7 @@ import {
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { useRealtimeStatus } from '@/context/realtime-context'; // 2. Impor hook status
+import { useRealtimeStatus } from '@/context/realtime-context';
 
 type ExpenseFromDB = {
   id: number;
@@ -44,7 +44,6 @@ const expenseCategories = [
     "UKT 1",
     "UKT 2",
     "UKT 3",
-    
 ];
 // Kategori ini nantinya akan dikelola di halaman Pengaturan
 const expenseCategoriesMetode = [
@@ -63,30 +62,27 @@ export default function AdminExpensesPage() {
   const [selectedExpense, setSelectedExpense] = useState<ExpenseFromDB | null>(null);
   const [formMessage, setFormMessage] = useState<{ type: 'success' | 'error', text: unknown } | null>(null);
 
-  const { addReconnectListener, removeReconnectListener } = useRealtimeStatus(); // 3. Gunakan hook
-  // --- 2. Tambahkan state untuk mengontrol modal gambar ---
+  const { addReconnectListener, removeReconnectListener } = useRealtimeStatus();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency', currency: 'IDR', minimumFractionDigits: 0,
     }).format(value);
 
-  // 4. Bungkus fetchExpenses dengan useCallback agar referensinya stabil
   const fetchExpenses = useCallback(async () => {
-    // Tidak set loading ke true di sini agar refresh tidak menampilkan "Memuat..."
     const { data } = await supabase
       .from('expenses')
       .select('*')
       .order('tanggal', { ascending: false });
     setExpenses(data || []);
-    setLoading(false); // Hanya set false setelah fetch pertama kali
+    setLoading(false);
   }, [supabase]);
 
   useEffect(() => {
     fetchExpenses();
   }, [fetchExpenses]);
   
-  // Realtime listener untuk perubahan data
   useEffect(() => {
     const channel = supabase
       .channel('realtime-expenses')
@@ -94,13 +90,11 @@ export default function AdminExpensesPage() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'expenses' },
         () => {
-          // Refresh data saat ada perubahan
           fetchExpenses();
         }
       )
       .subscribe();
 
-    // 5. Daftarkan dan bersihkan listener untuk re-koneksi
     addReconnectListener(fetchExpenses);
 
     return () => {
@@ -156,14 +150,16 @@ export default function AdminExpensesPage() {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        {/* --- PERUBAHAN 1: Header dibuat responsif --- */}
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <CardTitle>Manajemen Pengeluaran</CardTitle>
             <CardDescription>Tambah, edit, atau hapus data pengeluaran.</CardDescription>
           </div>
-          <Button onClick={handleAdd} className="flex items-center gap-2 cursor-pointer">
+          <Button onClick={handleAdd} className="flex items-center gap-2 cursor-pointer w-full sm:w-auto">
             <PlusCircle size={18} />
-            Tambah Pengeluaran
+            {/* --- PERUBAHAN 2: Teks disembunyikan di layar sangat kecil --- */}
+            <span className="sm:inline">Tambah Pengeluaran</span>
           </Button>
         </CardHeader>
         <CardContent>
@@ -171,9 +167,11 @@ export default function AdminExpensesPage() {
             placeholder="Cari deskripsi, penerima, atau kategori..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="max-w-sm mb-4"
+            className="max-w-full sm:max-w-sm mb-4"
           />
-          <div className="overflow-x-auto">
+
+          {/* --- PERUBAHAN 3: Tampilan tabel di desktop --- */}
+          <div className="hidden md:block overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -227,27 +225,69 @@ export default function AdminExpensesPage() {
               </TableBody>
             </Table>
           </div>
+
+          {/* --- PERUBAHAN 4: Tampilan kartu di mobile --- */}
+          <div className="md:hidden space-y-4">
+             {loading ? (
+                 <p className="text-center py-10">Memuat...</p>
+             ) : filteredExpenses.length > 0 ? (
+                filteredExpenses.map((expense) => (
+                    <div key={expense.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                                <p className="font-bold text-lg">{expense.penerima}</p>
+                                <p className="text-sm text-muted-foreground">{expense.deskripsi}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button variant="outline" size="icon" onClick={() => handleEdit(expense)} className="cursor-pointer h-8 w-8"><Edit className="h-4 w-4" /></Button>
+                                <Button variant="destructive" size="icon" onClick={() => handleDelete(expense.id, expense.bukti)} disabled={isPending} className="cursor-pointer h-8 w-8"><Trash2 className="h-4 w-4" /></Button>
+                            </div>
+                        </div>
+                        <div className="border-b"></div>
+                        <div className="flex justify-between items-center text-sm">
+                            <p className="font-mono text-base font-semibold">{formatCurrency(expense.jumlah)}</p>
+                            <div className="text-right">
+                                <p>{format(new Date(expense.tanggal), 'd MMM yyyy', { locale: id })}</p>
+                                <p><span className="whitespace-nowrap rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{expense.kategori}</span></p>
+                            </div>
+                        </div>
+                         {expense.bukti && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setSelectedImage(expense.bukti)}
+                                className="w-full cursor-pointer"
+                            >
+                                Lihat Bukti
+                            </Button>
+                         )}
+                    </div>
+                ))
+             ) : (
+                <p className="text-center py-10">Tidak ada data pengeluaran.</p>
+             )}
+          </div>
+
         </CardContent>
-        {/* --- 4. Tambahkan komponen Dialog di sini --- */}
-            <Dialog open={!!selectedImage} onOpenChange={(isOpen) => { if (!isOpen) { setSelectedImage(null); } }}>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Bukti Transaksi</DialogTitle>
-                </DialogHeader>
-                {selectedImage && (
-                  <div className="mt-4">
-                    <img 
-                      src={selectedImage} 
-                      alt="Bukti Transaksi" 
-                      className="w-full h-auto rounded-md object-contain max-h-[80vh]" 
-                    />
-                  </div>
-                )}
-              </DialogContent>
-      </Dialog>
+        <Dialog open={!!selectedImage} onOpenChange={(isOpen) => { if (!isOpen) { setSelectedImage(null); } }}>
+            <DialogContent className="max-w-2xl">
+            <DialogHeader>
+                <DialogTitle>Bukti Transaksi</DialogTitle>
+            </DialogHeader>
+            {selectedImage && (
+                <div className="mt-4">
+                <img 
+                    src={selectedImage} 
+                    alt="Bukti Transaksi" 
+                    className="w-full h-auto rounded-md object-contain max-h-[80vh]" 
+                />
+                </div>
+            )}
+            </DialogContent>
+        </Dialog>
       </Card>
 
-      {/* Modal Form */}
+      {/* Modal Form - tidak ada perubahan signifikan, sudah cukup responsif */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <form onSubmit={handleFormSubmit}>

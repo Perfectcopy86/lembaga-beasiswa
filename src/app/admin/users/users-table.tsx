@@ -21,6 +21,8 @@ import {
 import { Edit } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
@@ -96,7 +98,9 @@ export function UsersTable({ users: initialUsers, error }: { users: UserWithStat
         onChange={(e) => setSearch(e.target.value)}
         className="max-w-sm mb-4"
       />
-      <div className="overflow-x-auto">
+
+      {/* Tampilan Tabel untuk Desktop (md ke atas) */}
+      <div className="hidden md:block overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -140,7 +144,47 @@ export function UsersTable({ users: initialUsers, error }: { users: UserWithStat
         </Table>
       </div>
 
-      {/* Modal Edit Role */}
+      {/* Tampilan Kartu untuk Mobile (di bawah md) */}
+      <div className="block md:hidden space-y-4">
+        {filteredUsers.map((user) => (
+          <Card key={user.id}>
+            <CardHeader>
+                <CardTitle>{user.nama_donatur}</CardTitle>
+                <p className='text-sm text-muted-foreground'>{user.email}</p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Total Donasi</span>
+                    <span className="font-medium">{formatCurrency(user.total_donasi)} ({user.jumlah_transaksi}x)</span>
+                </div>
+                 <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Status Aktif</span>
+                     <Badge className={cn(
+                        'text-xs font-medium px-2 py-1',
+                        user.donationStatus === 'Aktif' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-800'
+                      )}>
+                        {user.donationStatus}
+                    </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Role</span>
+                    <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>{user.role}</Badge>
+                </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+                 <Button variant="outline" size="sm" onClick={() => handleEditRole(user)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Ubah Role
+                  </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+
+      {/* Modal Edit Role (tidak berubah) */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
