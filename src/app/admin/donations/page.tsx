@@ -48,6 +48,7 @@ export default function DonationsPage() {
       setUserProfiles(profilesResult.data || []);
 
     } catch (_err: unknown) {
+      console.error("Gagal mengambil data:", _err);
       setError("Gagal memuat data. Coba muat ulang halaman.");
     } finally {
       setLoading(false);
