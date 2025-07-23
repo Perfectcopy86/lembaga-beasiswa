@@ -39,10 +39,16 @@ export default function DonationsPage() {
 
   const { addReconnectListener, removeReconnectListener } = useRealtimeStatus();
 
-  // (Fungsi-fungsi helper seperti censorName, formatCurrency, getGroupedItems tetap sama)
+  // --- PERUBAHAN: Logika sensor nama diperbarui ---
   const censorName = (name: string): string => {
-    if (name.length <= 2) return name;
-    return `${name.substring(0, 2)}...`;
+    if (!name) return '';
+    const words = name.trim().split(/\s+/);
+    if (words.length > 1) {
+      return words.map(word => 
+        word.length > 2 ? `${word.substring(0, 2)}...` : word
+      ).join(' ');
+    }
+    return name.length > 2 ? `${name.substring(0, 2)}...` : name;
   };
 
   const formatCurrency = (value: number) => new Intl.NumberFormat('id-ID', {
