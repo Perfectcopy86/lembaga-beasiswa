@@ -1,3 +1,4 @@
+/* src/app/globals.css */
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -83,44 +84,45 @@
   --chart-5: oklch(0.8 0.15 150);
 }
 
-/* Dark Mode Theme (Biru Cerah di Latar Gelap) */
+/* Dark Mode Theme (Terinspirasi Discord) */
 .dark {
-  --background: oklch(0.12 0.04 240);
-  --foreground: oklch(0.95 0.02 240);
-  --card: oklch(0.18 0.05 240);
-  --card-foreground: oklch(0.95 0.02 240);
-  --popover: oklch(0.15 0.04 240);
-  --popover-foreground: oklch(0.95 0.02 240);
-  --primary: oklch(0.68 0.22 225); /* BIRU CERAH UTAMA */
-  --primary-foreground: oklch(0.1 0.05 240);
-  --secondary: oklch(0.22 0.06 240);
-  --secondary-foreground: oklch(0.95 0.02 240);
-  --muted: oklch(0.22 0.06 240);
-  --muted-foreground: oklch(0.65 0.03 240);
-  --accent: oklch(0.3 0.08 240);
-  --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.7 0.24 25);
-  --border: oklch(0.25 0.05 240);
-  --input: oklch(0.25 0.05 240);
-  --ring: oklch(0.68 0.22 225); /* BIRU CERAH RING */
+  --background: oklch(0.23 0.02 260);     /* Latar: #36393F */
+  --foreground: oklch(1 0 0);             /* Teks: Putih (#FFFFFF) */
+  --card: oklch(0.2 0.02 260);            /* Kartu: #2F3136 */
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.15 0.01 260);        /* Popover: #202225 */
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(0.65 0.15 265);        /* Primer: Blurple (#5865F2) */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.3 0.03 260);       /* Sekunder: Abu-abu lebih terang (#40444B) */
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.2 0.02 260);
+  --muted-foreground: oklch(0.7 0.01 260);   /* Teks Muted: Abu-abu terang */
+  --accent: oklch(0.3 0.03 260);
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.6 0.2 20);       /* Merah (#ED4245) */
+  --border: oklch(0.15 0.01 260);
+  --input: oklch(0.15 0.01 260);
+  --ring: oklch(0.65 0.15 265);
 
-  /* Sidebar Dark Mode - Latar belakang gelap, aksen biru cerah */
-  --sidebar: oklch(0.18 0.05 240); /* Latar sidebar sama dengan kartu */
-  --sidebar-foreground: oklch(0.9 0.03 240);
-  --sidebar-primary: oklch(0.68 0.22 225);
+  /* Sidebar Dark Mode */
+  --sidebar: oklch(0.2 0.02 260);
+  --sidebar-foreground: oklch(0.7 0.01 260);
+  --sidebar-primary: oklch(0.65 0.15 265);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.3 0.08 240); /* Warna hover/aktif sama dengan aksen utama */
-  --sidebar-accent-foreground: oklch(0.68 0.22 225); /* Teks hover/aktif jadi biru cerah */
-  --sidebar-border: oklch(0.25 0.05 240);
-  --sidebar-ring: oklch(0.68 0.22 225);
+  --sidebar-accent: oklch(0.3 0.03 260);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.15 0.01 260);
+  --sidebar-ring: oklch(0.65 0.15 265);
 
-  /* Chart Colors Dark Mode */
-  --chart-1: oklch(0.68 0.22 225);
-  --chart-2: oklch(0.75 0.18 190);
-  --chart-3: oklch(0.8 0.2 265);
-  --chart-4: oklch(0.7 0.22 30);
-  --chart-5: oklch(0.85 0.12 150);
+  /* Chart Colors Dark Mode - Palet Discord */
+  --chart-1: oklch(0.65 0.15 265);  /* Blurple */
+  --chart-2: oklch(0.7 0.1 150);   /* Green */
+  --chart-3: oklch(0.85 0.15 85);  /* Yellow */
+  --chart-4: oklch(0.7 0.2 20);    /* Red */
+  --chart-5: oklch(0.75 0.2 330);  /* Fuchsia */
 }
+
 
 @layer base {
   * {
